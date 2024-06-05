@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="floorItemList">
+        <item>우레탄</item>
+        <item>마루바닥</item>
+        <item>아스팔트</item>
+        <item>흙/모래</item>
+        <item>기타</item>
+    </string-array>
+
+    <string-array name="lightItemList">
+        <item>-(정보없음)</item>
+        <item>오후 9시까지</item>
+        <item>오후 10시까지</item>
+        <item>오후 11시까지</item>
+        <item>오후 12시까지</item>
+        <item>조명없음</item>
+    </string-array>
+</resources>
