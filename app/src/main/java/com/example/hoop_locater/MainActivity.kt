@@ -85,10 +85,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         googleMap.setOnInfoWindowClickListener(object : OnInfoWindowClickListener {
             override fun onInfoWindowClick(marker: Marker) {
-                Log.d("markerClick", "markerClick" + marker.title)
-
+                Log.d("markerTag", marker.tag.toString())
                 val intent = Intent(this@MainActivity, PopupActivity::class.java)
-                intent.putExtra("id", marker.title)
+                intent.putExtra("hoop", marker.tag as Hoop)
                 startActivity(intent)
             }
         })
@@ -140,12 +139,23 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         })
 
-        googleMap.moveCamera(
-            CameraUpdateFactory.newLatLngZoom(
-                LatLng(37.60794, 127.0090),
-                15f
+        if (intent.getSerializableExtra("hoop") != null) {
+            val extraHoop = intent.getSerializableExtra("hoop") as Hoop
+            googleMap.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    LatLng(extraHoop.latitude, extraHoop.longitude),
+                    15f
+                )
             )
-        )  // 카메라 이동
+        } else {
+            googleMap.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+//                    LatLng(37.5664056, 126.9778222), // 서울시청
+                    LatLng(37.60794, 127.009), // 테스트용
+                    15f
+                )
+            )
+        }
 
         this.googleMap = googleMap
     }
@@ -158,7 +168,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             snippet("이 지역의 농구장")
         }
 
-        googleMap.addMarker(markerOption)?.showInfoWindow()
+        val showInfoWindow = googleMap.addMarker(markerOption)
+        showInfoWindow!!.tag = hoop
+        showInfoWindow!!.showInfoWindow()
 
     }
 

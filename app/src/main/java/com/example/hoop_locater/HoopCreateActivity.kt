@@ -1,5 +1,6 @@
 package com.example.hoop_locater
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -11,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.hoop_locater.databinding.ActivityHoopCreateBinding
+import com.example.hoop_locater.dto.hoop.Hoop
+import com.example.hoop_locater.dto.hoop.HoopCreateRequest
+import com.example.hoop_locater.dto.hoop.HoopList
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -18,6 +22,11 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -112,8 +121,29 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
         binding.createBtn.setOnClickListener {
-            Log.d("asdasd", binding.nameInput.text.toString()+floorType+light)
-            Toast.makeText(this@HoopCreateActivity, binding.nameInput.text.toString()+floorType+light, Toast.LENGTH_LONG).show()
+
+            val retrofit = Retrofit.Builder().baseUrl("http://10.0.2.2:5000/")
+                .addConverterFactory(GsonConverterFactory.create()).build()
+            val service = retrofit.create(RetrofitService::class.java)
+
+            service.createHoop(HoopCreateRequest(binding.nameInput.text.toString(),
+                intent.getDoubleExtra("latitude", 0.0),
+                intent.getDoubleExtra("longitude", 0.0),
+                binding.hoopCountInput.text.toString().toInt(),
+                floorType,
+                light)).enqueue(object : Callback<Hoop> {
+                override fun onResponse(call: Call<Hoop>, response: Response<Hoop>) {
+                    Toast.makeText(this@HoopCreateActivity, "농구장이 생성되었습니다.", Toast.LENGTH_LONG).show()
+
+                    val intent = Intent(this@HoopCreateActivity, MainActivity::class.java)
+                    intent.putExtra("hoop", response.body()!!)
+                    startActivity(intent)
+                }
+
+                override fun onFailure(call: Call<Hoop>, t: Throwable) {
+                    Toast.makeText(this@HoopCreateActivity, "농구장 생성에 실패했습니다. 다시 시도해 주세요.", Toast.LENGTH_LONG).show()
+                }
+            })
         }
 
 

@@ -1,14 +1,20 @@
 package com.example.hoop_locater
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.isEmpty
-import com.example.hoop_locater.databinding.ActivityPopupBinding
 import com.example.hoop_locater.databinding.ActivityReportPopupBinding
+import com.example.hoop_locater.dto.hoop.Hoop
+import com.example.hoop_locater.dto.hoop.ReportCreateRequest
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class ReportPopupActivity : AppCompatActivity() {
 
@@ -30,9 +36,7 @@ class ReportPopupActivity : AppCompatActivity() {
         val displayMetrics = applicationContext.resources.displayMetrics
         window.attributes.width = (displayMetrics.widthPixels * 0.85).toInt()
 
-        val id = intent.getStringExtra("id")
-
-        binding.idTextView.text = id
+        val hoop = intent.getSerializableExtra("hoop") as Hoop
 
         var reason = ""
         binding.reasonRadioGroup.setOnCheckedChangeListener { group, checkedId ->
@@ -49,7 +53,27 @@ class ReportPopupActivity : AppCompatActivity() {
                 Toast.makeText(this@ReportPopupActivity, "사유를 선택한 후 신고해 주세요.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-            Toast.makeText(this@ReportPopupActivity, id + reason, Toast.LENGTH_LONG).show()
+
+            val retrofit = Retrofit.Builder().baseUrl("http://10.0.2.2:5000/")
+                .addConverterFactory(GsonConverterFactory.create()).build()
+            val service = retrofit.create(RetrofitService::class.java)
+
+            service.reportHoop(
+                ReportCreateRequest(
+                    hoop.id,
+                    reason
+                )
+            ).enqueue(object : Callback<Int> {
+                override fun onResponse(call: Call<Int>, response: Response<Int>) { // TODO reason 백엔드 null로 옴 저장 안됨
+                    Toast.makeText(this@ReportPopupActivity, "신고가 접수되었습니다.", Toast.LENGTH_LONG).show()
+                    this@ReportPopupActivity.finish()
+                }
+
+                override fun onFailure(call: Call<Int>, t: Throwable) {
+                    Toast.makeText(this@ReportPopupActivity, "신고에 실패했습니다. 다시 시도해 주세요.", Toast.LENGTH_LONG).show()
+                }
+            })
+
         }
 
         binding.backBtn.setOnClickListener {
