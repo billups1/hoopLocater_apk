@@ -32,7 +32,7 @@ class PopupActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val displayMetrics = applicationContext.resources.displayMetrics
-        window.attributes.width = (displayMetrics.widthPixels * 0.85).toInt()
+        window.attributes.width = (displayMetrics.widthPixels * 0.91).toInt()
 
         val hoop = intent.getSerializableExtra("hoop") as Hoop
 

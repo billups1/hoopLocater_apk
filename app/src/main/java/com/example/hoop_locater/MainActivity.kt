@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.example.hoop_locater.BuildConfig.API_URL
 import com.example.hoop_locater.databinding.ActivityMainBinding
 import com.example.hoop_locater.dto.hoop.Hoop
 import com.example.hoop_locater.dto.hoop.HoopList
@@ -47,14 +48,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        if (isPermitted()) {
-//            // 현재 위치로 카메라 이동
-//
-//        } else {
-//            ActivityCompat.requestPermissions(this, permissions, PERM_PLAG)
-//            Toast.makeText(this,"권한 승인이 필요합니다.",Toast.LENGTH_LONG).show()
-//        }
-
         this.mapView = binding.mapView
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
@@ -63,15 +56,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.navigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.settingFragment -> {
-                    Log.d("BottomNavigationView", "zxczxc")
+                    Toast.makeText(baseContext, "미구현", Toast.LENGTH_LONG).show()
                     return@setOnItemSelectedListener true
                 }
                 R.id.helpFragment -> {
                     startActivity(Intent(this, HelpPopupActivity::class.java))
                     return@setOnItemSelectedListener true
                 }
-                R.id.appInfoFragment -> {
-                    Log.d("BottomNavigationView", "zxczxc")
+                R.id.homeFragment -> {
+                    startActivity(Intent(this, MainActivity::class.java))
                     return@setOnItemSelectedListener true
                 }
                 else -> {
@@ -85,7 +78,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         googleMap.setOnInfoWindowClickListener(object : OnInfoWindowClickListener {
             override fun onInfoWindowClick(marker: Marker) {
-                Log.d("markerTag", marker.tag.toString())
                 val intent = Intent(this@MainActivity, PopupActivity::class.java)
                 intent.putExtra("hoop", marker.tag as Hoop)
                 startActivity(intent)
@@ -97,7 +89,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 val intent = Intent(this@MainActivity, HoopCreateActivity::class.java)
                 intent.putExtra("latitude", latLng.latitude)
                 intent.putExtra("longitude", latLng.longitude)
-                Log.d("longClick", latLng.toString())
                 startActivity(intent)
             }
         })
@@ -119,23 +110,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 permissions,
                 PERM_PLAG
             )
-            return
         }
         googleMap.isMyLocationEnabled = true
 
-        val retrofit = Retrofit.Builder().baseUrl("http://10.0.2.2:5000/")
+        val retrofit = Retrofit.Builder().baseUrl(API_URL)
             .addConverterFactory(GsonConverterFactory.create()).build()
         val service = retrofit.create(RetrofitService::class.java)
 
         service.getHoopList()?.enqueue(object : Callback<HoopList> {
             override fun onResponse(call: Call<HoopList>, response: Response<HoopList>) {
-                response.body()!!.forEach {
+                response.body()?.forEach {
                     setupMarker(it)
                 }
             }
-
             override fun onFailure(call: Call<HoopList>, t: Throwable) {
-                Log.d("YMC", "onResponse 실패" + t.toString() + "/" + t.message)
+                Toast.makeText(this@MainActivity, "농구장 불러오기에 실패했습니다. 잠시 후 다시 시도해 주세요.", Toast.LENGTH_LONG).show()
             }
         })
 
@@ -150,9 +139,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         } else {
             googleMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
-//                    LatLng(37.5664056, 126.9778222), // 서울시청
-                    LatLng(37.60794, 127.009), // 테스트용
-                    15f
+                    LatLng(37.5664056, 126.9778222), // 서울시청
+                    13f
                 )
             )
         }
@@ -171,7 +159,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val showInfoWindow = googleMap.addMarker(markerOption)
         showInfoWindow!!.tag = hoop
         showInfoWindow!!.showInfoWindow()
-
     }
 
 }

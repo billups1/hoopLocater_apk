@@ -26,7 +26,7 @@ class HelpPopupActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val displayMetrics = applicationContext.resources.displayMetrics
-        window.attributes.width = (displayMetrics.widthPixels * 0.85).toInt()
+        window.attributes.width = (displayMetrics.widthPixels * 0.91).toInt()
 
         binding.backBtn.setOnClickListener {
             this.finish()

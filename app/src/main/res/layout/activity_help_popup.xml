@@ -28,15 +28,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="30dp"
-            android:paddingBottom="30dp">
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp">
 
            <TextView
-               android:text="1. 이렇게 사용하세요.
-2. 이렇게 사용하세요."
+               android:text="
+1. 앱 소개 \n
+무료로 사용할 수 있는 야외 농구장 정보를 공유하는 앱입니다.
+\n \n
+2. 이용 방법\n
+- 지도에 있는 붉은색 마커는 이 곳에 농구장이 있다는 것을 나타냅니다.\n
+- 마커를 한번 클릭하면 마커 위에 조그만 정보창이 켜지고, 정보창을 한번 더 클릭하면 농구장의 자세한 정보를 확인할 수 있습니다.\n
+\n
+3. 신규 농구장 등록\n
+- 농구장을 등록할 위치를 길게 클릭하면 농구장 정보를 새롭게 등록할 수 있습니다.
+알고 계신 농구장을 자유롭게 등록해 주세요.
+\n \n
+* 이 앱은 이용자의 개인정보 및 위치정보를 취득하거나 저장하지 않습니다."
                android:layout_margin="15dp"
                android:layout_width="match_parent"
-               android:layout_height="wrap_content"/>
+               android:layout_height="wrap_content"
+               android:lineSpacingMultiplier="1.2"/>
 
 
         </LinearLayout>

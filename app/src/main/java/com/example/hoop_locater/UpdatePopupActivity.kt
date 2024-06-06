@@ -11,6 +11,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.hoop_locater.BuildConfig.API_URL
 import com.example.hoop_locater.databinding.ActivityUpdatePopupBinding
 import com.example.hoop_locater.dto.hoop.Hoop
 import com.example.hoop_locater.dto.hoop.HoopUpdateRequest
@@ -38,13 +39,11 @@ class UpdatePopupActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val displayMetrics = applicationContext.resources.displayMetrics
-        window.attributes.width = (displayMetrics.widthPixels * 0.85).toInt()
+        window.attributes.width = (displayMetrics.widthPixels * 0.91).toInt()
 
         val hoop = intent.getSerializableExtra("hoop") as Hoop
 
         binding.id.setText(hoop.id.toString())
-
-        Log.d("hoopLog", hoop.toString())
 
         binding.nameInput.setText(hoop.name)
         binding.hoopCountInput.setText(hoop.hoopCount.toString())
@@ -138,7 +137,7 @@ class UpdatePopupActivity : AppCompatActivity() {
         }
 
         binding.updateBtn.setOnClickListener {
-            val retrofit = Retrofit.Builder().baseUrl("http://10.0.2.2:5000/")
+            val retrofit = Retrofit.Builder().baseUrl(API_URL)
                 .addConverterFactory(GsonConverterFactory.create()).build()
             val service = retrofit.create(RetrofitService::class.java)
 

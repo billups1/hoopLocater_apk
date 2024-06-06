@@ -11,6 +11,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.hoop_locater.BuildConfig.API_URL
 import com.example.hoop_locater.databinding.ActivityHoopCreateBinding
 import com.example.hoop_locater.dto.hoop.Hoop
 import com.example.hoop_locater.dto.hoop.HoopCreateRequest
@@ -52,6 +53,26 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
         this.mapView = binding.mapView
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
+
+        binding.navigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.settingFragment -> {
+                    Toast.makeText(baseContext, "미구현", Toast.LENGTH_LONG).show()
+                    return@setOnItemSelectedListener true
+                }
+                R.id.helpFragment -> {
+                    startActivity(Intent(this, HelpPopupActivity::class.java))
+                    return@setOnItemSelectedListener true
+                }
+                R.id.homeFragment -> {
+                    startActivity(Intent(this, MainActivity::class.java))
+                    return@setOnItemSelectedListener true
+                }
+                else -> {
+                    return@setOnItemSelectedListener false
+                }
+            }
+        }
 
         binding.floorTypeSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.floorItemList, android.R.layout.simple_spinner_item)
         var floorType = ""
@@ -122,7 +143,7 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding.createBtn.setOnClickListener {
 
-            val retrofit = Retrofit.Builder().baseUrl("http://10.0.2.2:5000/")
+            val retrofit = Retrofit.Builder().baseUrl(API_URL)
                 .addConverterFactory(GsonConverterFactory.create()).build()
             val service = retrofit.create(RetrofitService::class.java)
 

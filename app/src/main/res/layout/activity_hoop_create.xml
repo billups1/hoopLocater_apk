@@ -31,7 +31,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="새 농구장 정보 만들기"
+                    android:text="신규 농구장 등록"
                     android:textSize="18dp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -122,7 +122,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
-                    android:text="만들기" />
+                    android:text="등록" />
 
                 <Button
                     android:id="@+id/backBtn"

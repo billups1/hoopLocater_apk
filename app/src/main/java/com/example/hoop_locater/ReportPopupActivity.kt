@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.hoop_locater.BuildConfig.API_URL
 import com.example.hoop_locater.databinding.ActivityReportPopupBinding
 import com.example.hoop_locater.dto.hoop.Hoop
 import com.example.hoop_locater.dto.hoop.ReportCreateRequest
@@ -34,7 +35,7 @@ class ReportPopupActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val displayMetrics = applicationContext.resources.displayMetrics
-        window.attributes.width = (displayMetrics.widthPixels * 0.85).toInt()
+        window.attributes.width = (displayMetrics.widthPixels * 0.91).toInt()
 
         val hoop = intent.getSerializableExtra("hoop") as Hoop
 
@@ -54,7 +55,7 @@ class ReportPopupActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val retrofit = Retrofit.Builder().baseUrl("http://10.0.2.2:5000/")
+            val retrofit = Retrofit.Builder().baseUrl(API_URL)
                 .addConverterFactory(GsonConverterFactory.create()).build()
             val service = retrofit.create(RetrofitService::class.java)
 
@@ -64,7 +65,7 @@ class ReportPopupActivity : AppCompatActivity() {
                     reason
                 )
             ).enqueue(object : Callback<Int> {
-                override fun onResponse(call: Call<Int>, response: Response<Int>) { // TODO reason 백엔드 null로 옴 저장 안됨
+                override fun onResponse(call: Call<Int>, response: Response<Int>) {
                     Toast.makeText(this@ReportPopupActivity, "신고가 접수되었습니다.", Toast.LENGTH_LONG).show()
                     this@ReportPopupActivity.finish()
                 }
