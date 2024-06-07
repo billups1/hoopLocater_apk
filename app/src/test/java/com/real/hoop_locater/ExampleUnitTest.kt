@@ -1,4 +1,4 @@
-package com.example.hoop_locater
+package com.real.hoop_locater
 
 import org.junit.Test
 

@@ -1,18 +1,17 @@
-package com.example.hoop_locater
+package com.real.hoop_locater
 
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import com.example.hoop_locater.BuildConfig.API_URL
-import com.example.hoop_locater.databinding.ActivityMainBinding
-import com.example.hoop_locater.dto.hoop.Hoop
-import com.example.hoop_locater.dto.hoop.HoopList
+import com.real.hoop_locater.BuildConfig.API_URL
+import com.real.hoop_locater.databinding.ActivityMainBinding
+import com.real.hoop_locater.dto.hoop.Hoop
+import com.real.hoop_locater.dto.hoop.HoopList
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
@@ -30,11 +29,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
-    val permissions = arrayOf(
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION
-    )
-    val PERM_PLAG = 99
+//    val permissions = arrayOf(
+//        Manifest.permission.ACCESS_FINE_LOCATION,
+//        Manifest.permission.ACCESS_COARSE_LOCATION
+//    )
+//    val PERM_PLAG = 99
 
     lateinit var binding: ActivityMainBinding
 
@@ -56,7 +55,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.navigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.settingFragment -> {
-                    Toast.makeText(baseContext, "미구현", Toast.LENGTH_LONG).show()
+                    Toast.makeText(baseContext, "구현중", Toast.LENGTH_LONG).show()
                     return@setOnItemSelectedListener true
                 }
                 R.id.helpFragment -> {
@@ -65,6 +64,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
                 R.id.homeFragment -> {
                     startActivity(Intent(this, MainActivity::class.java))
+                    finish()
                     return@setOnItemSelectedListener true
                 }
                 else -> {
@@ -96,22 +96,22 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 //         확대 축소 버튼
         googleMap.uiSettings.isZoomControlsEnabled = true
 
-        // 내 위치 가져오기
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                permissions,
-                PERM_PLAG
-            )
-        }
-        googleMap.isMyLocationEnabled = true
+//        // 내 위치 가져오기
+//        if (ActivityCompat.checkSelfPermission(
+//                this,
+//                Manifest.permission.ACCESS_FINE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+//                this,
+//                Manifest.permission.ACCESS_COARSE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED
+//        ) {
+//            ActivityCompat.requestPermissions(
+//                this,
+//                permissions,
+//                PERM_PLAG
+//            )
+//        }
+//        googleMap.isMyLocationEnabled = true
 
         val retrofit = Retrofit.Builder().baseUrl(API_URL)
             .addConverterFactory(GsonConverterFactory.create()).build()
@@ -153,12 +153,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val markerOption = MarkerOptions().apply {
             position(LatLng(hoop.latitude, hoop.longitude))
             title(hoop.name)
-            snippet("이 지역의 농구장")
+            snippet("클릭해서 자세히 보기")
         }
 
         val showInfoWindow = googleMap.addMarker(markerOption)
         showInfoWindow!!.tag = hoop
-        showInfoWindow!!.showInfoWindow()
     }
 
 }

@@ -1,13 +1,10 @@
-package com.example.hoop_locater
+package com.real.hoop_locater
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class NaviActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

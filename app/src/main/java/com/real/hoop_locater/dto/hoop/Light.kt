@@ -1,4 +1,4 @@
-package com.example.hoop_locater.dto.hoop
+package com.real.hoop_locater.dto.hoop
 
 import java.io.Serializable
 

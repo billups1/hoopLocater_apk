@@ -1,8 +1,7 @@
-package com.example.hoop_locater
+package com.real.hoop_locater
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -11,11 +10,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.hoop_locater.BuildConfig.API_URL
-import com.example.hoop_locater.databinding.ActivityHoopCreateBinding
-import com.example.hoop_locater.dto.hoop.Hoop
-import com.example.hoop_locater.dto.hoop.HoopCreateRequest
-import com.example.hoop_locater.dto.hoop.HoopList
+import com.real.hoop_locater.BuildConfig.API_URL
+import com.real.hoop_locater.databinding.ActivityHoopCreateBinding
+import com.real.hoop_locater.dto.hoop.Hoop
+import com.real.hoop_locater.dto.hoop.HoopCreateRequest
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -57,7 +55,7 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.navigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.settingFragment -> {
-                    Toast.makeText(baseContext, "미구현", Toast.LENGTH_LONG).show()
+                    Toast.makeText(baseContext, "구현중", Toast.LENGTH_LONG).show()
                     return@setOnItemSelectedListener true
                 }
                 R.id.helpFragment -> {
@@ -66,6 +64,7 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
                 R.id.homeFragment -> {
                     startActivity(Intent(this, MainActivity::class.java))
+                    finish()
                     return@setOnItemSelectedListener true
                 }
                 else -> {
@@ -156,6 +155,7 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
                 override fun onResponse(call: Call<Hoop>, response: Response<Hoop>) {
                     Toast.makeText(this@HoopCreateActivity, "농구장이 생성되었습니다.", Toast.LENGTH_LONG).show()
 
+                    finish()
                     val intent = Intent(this@HoopCreateActivity, MainActivity::class.java)
                     intent.putExtra("hoop", response.body()!!)
                     startActivity(intent)

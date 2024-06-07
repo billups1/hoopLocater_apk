@@ -1,4 +1,4 @@
-package com.example.hoop_locater
+package com.real.hoop_locater
 
 import android.content.Intent
 import android.os.Bundle

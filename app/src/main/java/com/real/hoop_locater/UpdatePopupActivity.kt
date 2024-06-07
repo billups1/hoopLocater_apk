@@ -1,8 +1,8 @@
-package com.example.hoop_locater
+package com.real.hoop_locater
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -11,15 +11,16 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.hoop_locater.BuildConfig.API_URL
-import com.example.hoop_locater.databinding.ActivityUpdatePopupBinding
-import com.example.hoop_locater.dto.hoop.Hoop
-import com.example.hoop_locater.dto.hoop.HoopUpdateRequest
+import com.real.hoop_locater.BuildConfig.API_URL
+import com.real.hoop_locater.databinding.ActivityUpdatePopupBinding
+import com.real.hoop_locater.dto.hoop.Hoop
+import com.real.hoop_locater.dto.hoop.HoopUpdateRequest
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+
 
 class UpdatePopupActivity : AppCompatActivity() {
 
@@ -47,8 +48,6 @@ class UpdatePopupActivity : AppCompatActivity() {
 
         binding.nameInput.setText(hoop.name)
         binding.hoopCountInput.setText(hoop.hoopCount.toString())
-        binding.floorTypeSpinner.setSelection(hoop.floorType.order)
-        binding.lightSpinner.setSelection(hoop.light.order)
 
         binding.floorTypeSpinner.adapter = ArrayAdapter.createFromResource(
             this,
@@ -136,6 +135,9 @@ class UpdatePopupActivity : AppCompatActivity() {
             }
         }
 
+        binding.floorTypeSpinner.setSelection(hoop.floorType.order)
+        binding.lightSpinner.setSelection(hoop.light.order)
+
         binding.updateBtn.setOnClickListener {
             val retrofit = Retrofit.Builder().baseUrl(API_URL)
                 .addConverterFactory(GsonConverterFactory.create()).build()
@@ -151,10 +153,9 @@ class UpdatePopupActivity : AppCompatActivity() {
                 )
             ).enqueue(object : Callback<Hoop> {
                 override fun onResponse(call: Call<Hoop>, response: Response<Hoop>) {
-                    Toast.makeText(this@UpdatePopupActivity, "농구장 정보가 수정되었습니다.", Toast.LENGTH_LONG)
-                        .show()
-
-                    val intent = Intent(this@UpdatePopupActivity, MainActivity::class.java)
+                    Toast.makeText(this@UpdatePopupActivity, "농구장 정보가 수정되었습니다.", Toast.LENGTH_LONG).show()
+                    finish()
+                    val intent = Intent(baseContext, MainActivity::class.java)
                     intent.putExtra("hoop", response.body() as Hoop)
                     startActivity(intent)
                 }

@@ -10,7 +10,7 @@
     </string-array>
 
     <string-array name="lightItemList">
-        <item>-(정보없음)</item>
+        <item>(정보없음)</item>
         <item>오후 9시까지</item>
         <item>오후 10시까지</item>
         <item>오후 11시까지</item>

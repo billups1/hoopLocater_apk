@@ -1,18 +1,13 @@
-package com.example.hoop_locater
+package com.real.hoop_locater
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import android.widget.Button
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.hoop_locater.databinding.ActivityPopupBinding
-import com.example.hoop_locater.databinding.ActivityUpdatePopupBinding
-import com.example.hoop_locater.dto.hoop.Hoop
+import com.real.hoop_locater.databinding.ActivityPopupBinding
+import com.real.hoop_locater.dto.hoop.Hoop
 
 class PopupActivity : AppCompatActivity() {
 

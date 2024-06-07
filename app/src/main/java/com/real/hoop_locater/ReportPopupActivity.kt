@@ -1,4 +1,4 @@
-package com.example.hoop_locater
+package com.real.hoop_locater
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,10 +7,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.hoop_locater.BuildConfig.API_URL
-import com.example.hoop_locater.databinding.ActivityReportPopupBinding
-import com.example.hoop_locater.dto.hoop.Hoop
-import com.example.hoop_locater.dto.hoop.ReportCreateRequest
+import com.real.hoop_locater.BuildConfig.API_URL
+import com.real.hoop_locater.databinding.ActivityReportPopupBinding
+import com.real.hoop_locater.dto.hoop.Hoop
+import com.real.hoop_locater.dto.hoop.ReportCreateRequest
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -67,6 +67,7 @@ class ReportPopupActivity : AppCompatActivity() {
             ).enqueue(object : Callback<Int> {
                 override fun onResponse(call: Call<Int>, response: Response<Int>) {
                     Toast.makeText(this@ReportPopupActivity, "신고가 접수되었습니다.", Toast.LENGTH_LONG).show()
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     this@ReportPopupActivity.finish()
                 }
 

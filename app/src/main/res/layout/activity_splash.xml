@@ -67,7 +67,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="PresentedBy billups"
+        android:text="PresentedBy billups1"
         android:layout_marginTop="9dp"
         android:textColor="#7E7E7E"
         app:layout_constraintEnd_toEndOf="@+id/linearLayout"

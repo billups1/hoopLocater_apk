@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.hoop_locater"
+    namespace = "com.real.hoop_locater"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.hoop_locater"
+        applicationId = "com.real.hoop_locater"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

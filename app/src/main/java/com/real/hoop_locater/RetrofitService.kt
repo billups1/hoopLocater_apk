@@ -1,10 +1,10 @@
-package com.example.hoop_locater
+package com.real.hoop_locater
 
-import com.example.hoop_locater.dto.hoop.Hoop
-import com.example.hoop_locater.dto.hoop.HoopCreateRequest
-import com.example.hoop_locater.dto.hoop.HoopList
-import com.example.hoop_locater.dto.hoop.ReportCreateRequest
-import com.example.hoop_locater.dto.hoop.HoopUpdateRequest
+import com.real.hoop_locater.dto.hoop.Hoop
+import com.real.hoop_locater.dto.hoop.HoopCreateRequest
+import com.real.hoop_locater.dto.hoop.HoopList
+import com.real.hoop_locater.dto.hoop.ReportCreateRequest
+import com.real.hoop_locater.dto.hoop.HoopUpdateRequest
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET

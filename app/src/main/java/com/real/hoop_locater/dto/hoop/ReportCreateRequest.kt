@@ -1,4 +1,4 @@
-package com.example.hoop_locater.dto.hoop
+package com.real.hoop_locater.dto.hoop
 
 data class ReportCreateRequest(
     val hoopId: Int,
