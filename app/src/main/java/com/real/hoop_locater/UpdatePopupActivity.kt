@@ -53,7 +53,7 @@ class UpdatePopupActivity : AppCompatActivity() {
             R.array.floorItemList,
             android.R.layout.simple_spinner_item
         )
-        var floorType = ""
+        var floorType = hoop.floorType.key
         binding.floorTypeSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -90,12 +90,8 @@ class UpdatePopupActivity : AppCompatActivity() {
             }
 
 
-        binding.lightSpinner.adapter = ArrayAdapter.createFromResource(
-            this,
-            R.array.lightItemList,
-            android.R.layout.simple_spinner_item
-        )
-        var light = ""
+        binding.lightSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.lightItemList, android.R.layout.simple_spinner_item)
+        var light = hoop.light.key
         binding.lightSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -134,8 +130,60 @@ class UpdatePopupActivity : AppCompatActivity() {
             }
         }
 
+        binding.freeStateSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.freeStateItemList, android.R.layout.simple_spinner_item)
+        var freeState = hoop.freeState.key
+        binding.freeStateSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                when (position) {
+                    0 -> {
+                        freeState = "NO_INFO"
+                    }
+                    1 -> {
+                        freeState = "FREE"
+                    }
+                    2 -> {
+                        freeState = "PAID"
+                    }
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+        }
+
+        binding.StandardStateSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.standardStateItemList, android.R.layout.simple_spinner_item)
+        var standardState = hoop.standardState.key
+        binding.StandardStateSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                when (position) {
+                    0 -> {
+                        standardState = "NO_INFO"
+                    }
+                    1 -> {
+                        standardState = "STANDARD"
+                    }
+                    2 -> {
+                        standardState = "UN_STANDARD"
+                    }
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+        }
+
         binding.floorTypeSpinner.setSelection(hoop.floorType.order)
         binding.lightSpinner.setSelection(hoop.light.order)
+        binding.freeStateSpinner.setSelection(hoop.freeState.order)
+        binding.StandardStateSpinner.setSelection(hoop.standardState.order)
 
         binding.updateBtn.setOnClickListener {
             val retrofit = Retrofit.Builder().baseUrl(API_URL)
@@ -148,7 +196,9 @@ class UpdatePopupActivity : AppCompatActivity() {
                     binding.nameInput.text.toString(),
                     binding.hoopCountInput.text.toString().toInt(),
                     floorType,
-                    light
+                    light,
+                    freeState,
+                    standardState
                 )
             ).enqueue(object : Callback<Hoop> {
                 override fun onResponse(call: Call<Hoop>, response: Response<Hoop>) {

@@ -35,6 +35,8 @@ class PopupActivity : AppCompatActivity() {
         binding.hoopCount.text = hoop.hoopCount.toString()
         binding.floorType.text = hoop.floorType.krName
         binding.light.text = hoop.light.krName
+        binding.freeState.text = hoop.freeState.krName
+        binding.standardState.text = hoop.standardState.krName
 
         // 업데이트
         binding.updateBtn.setOnClickListener {

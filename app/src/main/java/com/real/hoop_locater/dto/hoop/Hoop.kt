@@ -9,5 +9,7 @@ data class Hoop(
     val longitude: Double,
     val hoopCount: Int,
     val floorType: FloorType,
-    val light: Light
+    val light: Light,
+    val freeState: FreeState,
+    val standardState: StandardState
 ) : Serializable

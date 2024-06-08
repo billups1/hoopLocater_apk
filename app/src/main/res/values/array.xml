@@ -17,4 +17,17 @@
         <item>오후 12시까지</item>
         <item>조명없음</item>
     </string-array>
+
+    <string-array name="freeStateItemList">
+        <item>(정보없음)</item>
+        <item>무료</item>
+        <item>유료</item>
+    </string-array>
+
+    <string-array name="standardStateItemList">
+        <item>(정보없음)</item>
+        <item>정규코트</item>
+        <item>정규코트 아님</item>
+    </string-array>
+
 </resources>

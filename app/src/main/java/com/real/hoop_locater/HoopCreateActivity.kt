@@ -74,7 +74,7 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         binding.floorTypeSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.floorItemList, android.R.layout.simple_spinner_item)
-        var floorType = ""
+        var floorType = "URETHANE"
         binding.floorTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -106,7 +106,7 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
         binding.lightSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.lightItemList, android.R.layout.simple_spinner_item)
-        var light = ""
+        var light = "NO_INFO"
         binding.lightSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -139,6 +139,56 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
+        binding.freeStateSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.freeStateItemList, android.R.layout.simple_spinner_item)
+        var freeState = "FREE"
+        binding.lightSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                when (position) {
+                    0 -> {
+                        freeState = "FREE"
+                    }
+                    1 -> {
+                        freeState = "PAID"
+                    }
+                    2 -> {
+                        freeState = "NO_INFO"
+                    }
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+        }
+
+        binding.StandardStateSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.standardStateItemList, android.R.layout.simple_spinner_item)
+        var standardState = "NO_INFO"
+        binding.StandardStateSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                when (position) {
+                    0 -> {
+                        standardState = "NO_INFO"
+                    }
+                    1 -> {
+                        standardState = "STANDARD"
+                    }
+                    2 -> {
+                        standardState = "UN_STANDARD"
+                    }
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+        }
+
 
         binding.createBtn.setOnClickListener {
 
@@ -151,13 +201,14 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
                 intent.getDoubleExtra("longitude", 0.0),
                 binding.hoopCountInput.text.toString().toInt(),
                 floorType,
-                light)).enqueue(object : Callback<Hoop> {
+                light,
+                freeState,
+                standardState)).enqueue(object : Callback<Hoop> {
                 override fun onResponse(call: Call<Hoop>, response: Response<Hoop>) {
                     Toast.makeText(this@HoopCreateActivity, "농구장이 생성되었습니다.", Toast.LENGTH_LONG).show()
-
                     finish()
                     val intent = Intent(this@HoopCreateActivity, MainActivity::class.java)
-                    intent.putExtra("hoop", response.body()!!)
+                    intent.putExtra("hoop", response.body())
                     startActivity(intent)
                 }
 

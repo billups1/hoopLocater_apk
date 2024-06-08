@@ -5,5 +5,7 @@ data class HoopUpdateRequest(
     val name: String,
     val hoopCount: Int?,
     val floorType: String,
-    val light: String
+    val light: String,
+    val freeState: String,
+    val standardState: String
 )

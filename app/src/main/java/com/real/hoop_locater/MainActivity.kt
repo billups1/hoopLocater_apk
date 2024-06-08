@@ -133,7 +133,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             googleMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     LatLng(extraHoop.latitude, extraHoop.longitude),
-                    15f
+                    13f
                 )
             )
         } else {
