@@ -121,6 +121,16 @@ class UpdatePopupActivity : AppCompatActivity() {
         binding.StandardStateSpinner.setSelection(hoop.standardState.order)
 
         binding.updateBtn.setOnClickListener {
+
+            if (binding.nameInput.text.toString().length == 0) {
+                Toast.makeText(this, "농구장 이름을 입력해 주세요.", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            if (binding.hoopCountInput.text.toString().length == 0) {
+                Toast.makeText(this, "골대 개수를 입력해 주세요.", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
             val retrofit = Retrofit.Builder().baseUrl(API_URL)
                 .addConverterFactory(GsonConverterFactory.create()).build()
             val service = retrofit.create(RetrofitService::class.java)
@@ -158,9 +168,6 @@ class UpdatePopupActivity : AppCompatActivity() {
 
         binding.backBtn.setOnClickListener {
             this.finish()
-            val intent = Intent(this, PopupActivity::class.java)
-            intent.putExtra("hoop", hoop)
-            startActivity(intent)
         }
 
     }

@@ -31,7 +31,7 @@ class SplashActivity : AppCompatActivity() {
 
         if (sharedPreferences.getString("anonymousLogin", null) == null) {
             val editor : Editor = sharedPreferences.edit()
-            editor.putString("anonymousLogin", UUID.randomUUID().toString().substring(0, 8))
+            editor.putString("anonymousLogin", UUID.randomUUID().toString().substring(0, 10))
             editor.commit()
         }
 
