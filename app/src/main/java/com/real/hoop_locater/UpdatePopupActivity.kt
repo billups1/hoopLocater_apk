@@ -1,5 +1,6 @@
 package com.real.hoop_locater
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -13,7 +14,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.real.hoop_locater.BuildConfig.API_URL
 import com.real.hoop_locater.databinding.ActivityUpdatePopupBinding
 import com.real.hoop_locater.dto.hoop.Hoop
-import com.real.hoop_locater.dto.hoop.HoopUpdateRequest
+import com.real.hoop_locater.dto.hoop.request.HoopUpdateRequest
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -48,11 +49,9 @@ class UpdatePopupActivity : AppCompatActivity() {
         binding.nameInput.setText(hoop.name)
         binding.hoopCountInput.setText(hoop.hoopCount.toString())
 
-        binding.floorTypeSpinner.adapter = ArrayAdapter.createFromResource(
-            this,
-            R.array.floorItemList,
-            android.R.layout.simple_spinner_item
-        )
+
+        val floorTypeList = listOf("URETHANE","PARQUET","ASPHALT","DIRT","ETC")
+        binding.floorTypeSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.floorItemList, android.R.layout.simple_spinner_item)
         var floorType = hoop.floorType.key
         binding.floorTypeSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
@@ -62,34 +61,13 @@ class UpdatePopupActivity : AppCompatActivity() {
                     position: Int,
                     id: Long
                 ) {
-                    when (position) {
-                        0 -> {
-                            floorType = "URETHANE"
-                        }
-
-                        1 -> {
-                            floorType = "PARQUET"
-                        }
-
-                        2 -> {
-                            floorType = "ASPHALT"
-                        }
-
-                        3 -> {
-                            floorType = "DIRT"
-                        }
-
-                        4 -> {
-                            floorType = "ETC"
-                        }
-                    }
+                    floorType = floorTypeList[position]
                 }
-
                 override fun onNothingSelected(parent: AdapterView<*>?) {
                 }
             }
 
-
+        val lightList = listOf("NO_INFO", "PM9", "PM10", "PM11", "PM12", "NO_LIGHT")
         binding.lightSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.lightItemList, android.R.layout.simple_spinner_item)
         var light = hoop.light.key
         binding.lightSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -99,37 +77,13 @@ class UpdatePopupActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                when (position) {
-                    0 -> {
-                        light = "NO_INFO"
-                    }
-
-                    1 -> {
-                        light = "PM9"
-                    }
-
-                    2 -> {
-                        light = "PM10"
-                    }
-
-                    3 -> {
-                        light = "PM11"
-                    }
-
-                    4 -> {
-                        light = "PM12"
-                    }
-
-                    5 -> {
-                        light = "NO_LIGHT"
-                    }
-                }
+                light = lightList[position]
             }
-
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         }
 
+        val freeStateList = listOf("NO_INFO", "FREE", "PAID")
         binding.freeStateSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.freeStateItemList, android.R.layout.simple_spinner_item)
         var freeState = hoop.freeState.key
         binding.freeStateSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -139,22 +93,13 @@ class UpdatePopupActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                when (position) {
-                    0 -> {
-                        freeState = "NO_INFO"
-                    }
-                    1 -> {
-                        freeState = "FREE"
-                    }
-                    2 -> {
-                        freeState = "PAID"
-                    }
-                }
+                freeState = freeStateList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         }
 
+        val standardStateList = listOf("NO_INFO", "STANDARD", "UN_STANDARD")
         binding.StandardStateSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.standardStateItemList, android.R.layout.simple_spinner_item)
         var standardState = hoop.standardState.key
         binding.StandardStateSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -164,17 +109,7 @@ class UpdatePopupActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                when (position) {
-                    0 -> {
-                        standardState = "NO_INFO"
-                    }
-                    1 -> {
-                        standardState = "STANDARD"
-                    }
-                    2 -> {
-                        standardState = "UN_STANDARD"
-                    }
-                }
+                standardState = standardStateList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
@@ -198,7 +133,8 @@ class UpdatePopupActivity : AppCompatActivity() {
                     floorType,
                     light,
                     freeState,
-                    standardState
+                    standardState,
+                    getSharedPreferences("sp1", Context.MODE_PRIVATE).getString("anonymousLogin", null)
                 )
             ).enqueue(object : Callback<Hoop> {
                 override fun onResponse(call: Call<Hoop>, response: Response<Hoop>) {

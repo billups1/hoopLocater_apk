@@ -1,4 +1,4 @@
-package com.real.hoop_locater.dto.hoop
+package com.real.hoop_locater.dto.hoop.request
 
 data class HoopCreateRequest(
     val name: String,
@@ -8,5 +8,6 @@ data class HoopCreateRequest(
     val floorType: String,
     val light: String,
     val freeState: String,
-    val standardState: String
+    val standardState: String,
+    val loginId : String?
 )

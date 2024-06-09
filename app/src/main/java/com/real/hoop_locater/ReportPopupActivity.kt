@@ -1,5 +1,6 @@
 package com.real.hoop_locater
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -10,7 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.real.hoop_locater.BuildConfig.API_URL
 import com.real.hoop_locater.databinding.ActivityReportPopupBinding
 import com.real.hoop_locater.dto.hoop.Hoop
-import com.real.hoop_locater.dto.hoop.ReportCreateRequest
+import com.real.hoop_locater.dto.report.request.ReportCreateRequest
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -62,7 +63,8 @@ class ReportPopupActivity : AppCompatActivity() {
             service.reportHoop(
                 ReportCreateRequest(
                     hoop.id,
-                    reason
+                    reason,
+                    getSharedPreferences("sp1", Context.MODE_PRIVATE).getString("anonymousLogin", null)
                 )
             ).enqueue(object : Callback<Int> {
                 override fun onResponse(call: Call<Int>, response: Response<Int>) {

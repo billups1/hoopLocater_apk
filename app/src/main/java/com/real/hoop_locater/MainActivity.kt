@@ -1,17 +1,10 @@
 package com.real.hoop_locater
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import com.real.hoop_locater.BuildConfig.API_URL
-import com.real.hoop_locater.databinding.ActivityMainBinding
-import com.real.hoop_locater.dto.hoop.Hoop
-import com.real.hoop_locater.dto.hoop.HoopList
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
@@ -21,6 +14,10 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.real.hoop_locater.BuildConfig.API_URL
+import com.real.hoop_locater.databinding.ActivityMainBinding
+import com.real.hoop_locater.dto.hoop.Hoop
+import com.real.hoop_locater.dto.hoop.HoopList
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -50,7 +47,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         this.mapView = binding.mapView
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
-
 
         binding.navigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -117,6 +113,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             .addConverterFactory(GsonConverterFactory.create()).build()
         val service = retrofit.create(RetrofitService::class.java)
 
+        // 맵 이동 끝났을때 경계선 좌표 알려주는 메서드
+//        googleMap.setOnCameraIdleListener(object : OnCameraIdleListener {
+//            override fun onCameraIdle() {
+//                var northeastLatLng = googleMap.getProjection().getVisibleRegion().latLngBounds.northeast; // 화면 좌측 상단 부분의 LatLng
+//                var southwestLatLng = googleMap.getProjection().getVisibleRegion().latLngBounds.southwest; // 화면 좌측 상단 부분의 LatLng
+//
+//                Log.d("northeastLatLng", northeastLatLng.toString())
+//                Log.d("southwestLatLng", southwestLatLng.toString())
+//            }
+//        })
         service.getHoopList()?.enqueue(object : Callback<HoopList> {
             override fun onResponse(call: Call<HoopList>, response: Response<HoopList>) {
                 response.body()?.forEach {

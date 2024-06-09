@@ -1,5 +1,6 @@
 package com.real.hoop_locater
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -10,10 +11,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.real.hoop_locater.BuildConfig.API_URL
-import com.real.hoop_locater.databinding.ActivityHoopCreateBinding
-import com.real.hoop_locater.dto.hoop.Hoop
-import com.real.hoop_locater.dto.hoop.HoopCreateRequest
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -21,6 +18,10 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.real.hoop_locater.BuildConfig.API_URL
+import com.real.hoop_locater.databinding.ActivityHoopCreateBinding
+import com.real.hoop_locater.dto.hoop.Hoop
+import com.real.hoop_locater.dto.hoop.request.HoopCreateRequest
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -73,6 +74,7 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
+        val floorTypeList = listOf("URETHANE","PARQUET","ASPHALT","DIRT","ETC")
         binding.floorTypeSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.floorItemList, android.R.layout.simple_spinner_item)
         var floorType = "URETHANE"
         binding.floorTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -82,29 +84,13 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
                 position: Int,
                 id: Long
             ) {
-                when (position) {
-                    0 -> {
-                        floorType = "URETHANE"
-                    }
-                    1 -> {
-                        floorType = "PARQUET"
-                    }
-                    2 -> {
-                        floorType = "ASPHALT"
-                    }
-                    3 -> {
-                        floorType = "DIRT"
-                    }
-                    4 -> {
-                        floorType = "ETC"
-                    }
-                }
+                floorType = floorTypeList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         }
 
-
+        val lightList = listOf("NO_INFO", "PM9", "PM10", "PM11", "PM12", "NO_LIGHT")
         binding.lightSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.lightItemList, android.R.layout.simple_spinner_item)
         var light = "NO_INFO"
         binding.lightSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -114,56 +100,29 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
                 position: Int,
                 id: Long
             ) {
-                when (position) {
-                    0 -> {
-                        light = "NO_INFO"
-                    }
-                    1 -> {
-                        light = "PM9"
-                    }
-                    2 -> {
-                        light = "PM10"
-                    }
-                    3 -> {
-                        light = "PM11"
-                    }
-                    4 -> {
-                        light = "PM12"
-                    }
-                    5 -> {
-                        light = "NO_LIGHT"
-                    }
-                }
+                light = lightList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         }
 
+        val freeStateList = listOf("NO_INFO", "FREE", "PAID")
         binding.freeStateSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.freeStateItemList, android.R.layout.simple_spinner_item)
         var freeState = "FREE"
-        binding.lightSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.freeStateSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
                 view: View?,
                 position: Int,
                 id: Long
             ) {
-                when (position) {
-                    0 -> {
-                        freeState = "FREE"
-                    }
-                    1 -> {
-                        freeState = "PAID"
-                    }
-                    2 -> {
-                        freeState = "NO_INFO"
-                    }
-                }
+                freeState = freeStateList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         }
 
+        val standardStateList = listOf("NO_INFO", "STANDARD", "UN_STANDARD")
         binding.StandardStateSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.standardStateItemList, android.R.layout.simple_spinner_item)
         var standardState = "NO_INFO"
         binding.StandardStateSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -173,17 +132,7 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
                 position: Int,
                 id: Long
             ) {
-                when (position) {
-                    0 -> {
-                        standardState = "NO_INFO"
-                    }
-                    1 -> {
-                        standardState = "STANDARD"
-                    }
-                    2 -> {
-                        standardState = "UN_STANDARD"
-                    }
-                }
+                standardState = standardStateList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
@@ -196,14 +145,17 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
                 .addConverterFactory(GsonConverterFactory.create()).build()
             val service = retrofit.create(RetrofitService::class.java)
 
-            service.createHoop(HoopCreateRequest(binding.nameInput.text.toString(),
+            service.createHoop(
+                HoopCreateRequest(binding.nameInput.text.toString(),
                 intent.getDoubleExtra("latitude", 0.0),
                 intent.getDoubleExtra("longitude", 0.0),
                 binding.hoopCountInput.text.toString().toInt(),
                 floorType,
                 light,
                 freeState,
-                standardState)).enqueue(object : Callback<Hoop> {
+                standardState,
+                getSharedPreferences("sp1", Context.MODE_PRIVATE).getString("anonymousLogin", null))
+            ).enqueue(object : Callback<Hoop> {
                 override fun onResponse(call: Call<Hoop>, response: Response<Hoop>) {
                     Toast.makeText(this@HoopCreateActivity, "농구장이 생성되었습니다.", Toast.LENGTH_LONG).show()
                     finish()
