@@ -1,4 +1,4 @@
-package com.real.hoop_locater
+package com.real.hoop_locater.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,6 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.real.hoop_locater.R
 import com.real.hoop_locater.databinding.ActivityPopupBinding
 import com.real.hoop_locater.dto.hoop.Hoop
 

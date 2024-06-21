@@ -1,4 +1,4 @@
-package com.real.hoop_locater
+package com.real.hoop_locater.activity
 
 import android.content.Context
 import android.content.Intent
@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.real.hoop_locater.R
 import java.util.UUID
 
 class SplashActivity : AppCompatActivity() {

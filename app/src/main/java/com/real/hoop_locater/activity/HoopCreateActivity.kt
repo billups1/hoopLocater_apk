@@ -1,4 +1,4 @@
-package com.real.hoop_locater
+package com.real.hoop_locater.activity
 
 import android.content.Context
 import android.content.Intent
@@ -19,6 +19,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.real.hoop_locater.BuildConfig.API_URL
+import com.real.hoop_locater.R
+import com.real.hoop_locater.RetrofitService
 import com.real.hoop_locater.databinding.ActivityHoopCreateBinding
 import com.real.hoop_locater.dto.hoop.Hoop
 import com.real.hoop_locater.dto.hoop.request.HoopCreateRequest
@@ -56,7 +58,7 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.navigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.settingFragment -> {
-                    Toast.makeText(baseContext, "구현중", Toast.LENGTH_LONG).show()
+                    startActivity(Intent(this, SettingActivity::class.java))
                     return@setOnItemSelectedListener true
                 }
                 R.id.helpFragment -> {
@@ -75,7 +77,8 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         val floorTypeList = listOf("URETHANE","PARQUET","ASPHALT","DIRT","ETC")
-        binding.floorTypeSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.floorItemList, android.R.layout.simple_spinner_item)
+        binding.floorTypeSpinner.adapter = ArrayAdapter.createFromResource(this,
+            R.array.floorItemList, android.R.layout.simple_spinner_item)
         var floorType = "URETHANE"
         binding.floorTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -91,7 +94,8 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         val lightList = listOf("NO_INFO", "PM9", "PM10", "PM11", "PM12", "NO_LIGHT")
-        binding.lightSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.lightItemList, android.R.layout.simple_spinner_item)
+        binding.lightSpinner.adapter = ArrayAdapter.createFromResource(this,
+            R.array.lightItemList, android.R.layout.simple_spinner_item)
         var light = "NO_INFO"
         binding.lightSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -107,7 +111,8 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         val freeStateList = listOf("NO_INFO", "FREE", "PAID")
-        binding.freeStateSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.freeStateItemList, android.R.layout.simple_spinner_item)
+        binding.freeStateSpinner.adapter = ArrayAdapter.createFromResource(this,
+            R.array.freeStateItemList, android.R.layout.simple_spinner_item)
         var freeState = "FREE"
         binding.freeStateSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -123,7 +128,8 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         val standardStateList = listOf("NO_INFO", "STANDARD", "UN_STANDARD")
-        binding.StandardStateSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.standardStateItemList, android.R.layout.simple_spinner_item)
+        binding.StandardStateSpinner.adapter = ArrayAdapter.createFromResource(this,
+            R.array.standardStateItemList, android.R.layout.simple_spinner_item)
         var standardState = "NO_INFO"
         binding.StandardStateSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(

@@ -1,4 +1,4 @@
-package com.real.hoop_locater
+package com.real.hoop_locater.activity
 
 import android.content.Context
 import android.content.Intent
@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.real.hoop_locater.BuildConfig.API_URL
+import com.real.hoop_locater.R
+import com.real.hoop_locater.RetrofitService
 import com.real.hoop_locater.databinding.ActivityReportPopupBinding
 import com.real.hoop_locater.dto.hoop.Hoop
 import com.real.hoop_locater.dto.report.request.ReportCreateRequest

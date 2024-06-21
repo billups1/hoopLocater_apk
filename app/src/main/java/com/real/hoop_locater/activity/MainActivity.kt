@@ -1,10 +1,9 @@
-package com.real.hoop_locater
+package com.real.hoop_locater.activity
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.content.SharedPreferences
 import android.location.Location
 import android.location.LocationManager
 import android.os.Build
@@ -14,19 +13,19 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener
-import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.real.hoop_locater.BuildConfig.API_URL
+import com.real.hoop_locater.R
+import com.real.hoop_locater.RetrofitService
 import com.real.hoop_locater.databinding.ActivityMainBinding
 import com.real.hoop_locater.dto.hoop.Hoop
 import com.real.hoop_locater.dto.hoop.HoopList
@@ -43,6 +42,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
+    private lateinit var sharedPreferences: SharedPreferences
+
+    val DEFAULT_ZOOM = 13f;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +53,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        sharedPreferences = getSharedPreferences("sp1", Context.MODE_PRIVATE)
+
         this.mapView = binding.mapView
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
@@ -58,7 +62,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.navigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.settingFragment -> {
-                    Toast.makeText(baseContext, "구현중", Toast.LENGTH_LONG).show()
+                    startActivity(Intent(this, SettingActivity::class.java))
                     return@setOnItemSelectedListener true
                 }
 
@@ -108,7 +112,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             .addConverterFactory(GsonConverterFactory.create()).build()
         val service = retrofit.create(RetrofitService::class.java)
 
-        // 맵 이동 끝났을때 경계선 좌표 알려주는 메서드 -> TODO 경계선 조금 밖에 까지만 마커 뿌리기
+        // 맵 이동 끝났을때 경계선 좌표 알려주는 메서드 -> TODO 농구장 데이터가 더 많아지면 경계선 조금 밖에 까지만 마커 뿌리기
 //        googleMap.setOnCameraIdleListener(object : OnCameraIdleListener {
 //            override fun onCameraIdle() {
 //                var northeastLatLng = googleMap.getProjection().getVisibleRegion().latLngBounds.northeast; // 화면 좌측 상단 부분의 LatLng
@@ -134,19 +138,28 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         })
 
+        Log.d("asd", sharedPreferences.getLong("myLatitude", 0L).toString())
+
         if (intent.getSerializableExtra("hoop") != null) {
             val extraHoop = intent.getSerializableExtra("hoop") as Hoop
             googleMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     LatLng(extraHoop.latitude, extraHoop.longitude),
-                    13f
+                    DEFAULT_ZOOM
                 )
+            )
+        } else if (sharedPreferences.getLong("myLatitude", 0L) != 0L) {
+            googleMap.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(LatLng(
+                    sharedPreferences.getDouble("myLatitude", 0.0),
+                    sharedPreferences.getDouble("myLongitude", 0.0)
+                ), DEFAULT_ZOOM)
             )
         } else {
             googleMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     LatLng(37.5664056, 126.9778222), // 서울시청
-                    13f
+                    DEFAULT_ZOOM
                 )
             )
         }
@@ -202,5 +215,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             mode != Settings.Secure.LOCATION_MODE_OFF
         }
     }
+
+    private fun SharedPreferences.getDouble(key: String, default: Double) =
+        java.lang.Double.longBitsToDouble(
+            getLong(
+                key,
+                java.lang.Double.doubleToRawLongBits(default)
+            )
+        )
 
 }

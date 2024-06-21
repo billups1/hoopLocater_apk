@@ -1,4 +1,4 @@
-package com.real.hoop_locater
+package com.real.hoop_locater.activity
 
 import android.content.Context
 import android.content.Intent
@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.real.hoop_locater.BuildConfig.API_URL
+import com.real.hoop_locater.R
+import com.real.hoop_locater.RetrofitService
 import com.real.hoop_locater.databinding.ActivityUpdatePopupBinding
 import com.real.hoop_locater.dto.hoop.Hoop
 import com.real.hoop_locater.dto.hoop.request.HoopUpdateRequest
@@ -51,7 +53,8 @@ class UpdatePopupActivity : AppCompatActivity() {
 
 
         val floorTypeList = listOf("URETHANE","PARQUET","ASPHALT","DIRT","ETC")
-        binding.floorTypeSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.floorItemList, android.R.layout.simple_spinner_item)
+        binding.floorTypeSpinner.adapter = ArrayAdapter.createFromResource(this,
+            R.array.floorItemList, android.R.layout.simple_spinner_item)
         var floorType = hoop.floorType.key
         binding.floorTypeSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
@@ -68,7 +71,8 @@ class UpdatePopupActivity : AppCompatActivity() {
             }
 
         val lightList = listOf("NO_INFO", "PM9", "PM10", "PM11", "PM12", "NO_LIGHT")
-        binding.lightSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.lightItemList, android.R.layout.simple_spinner_item)
+        binding.lightSpinner.adapter = ArrayAdapter.createFromResource(this,
+            R.array.lightItemList, android.R.layout.simple_spinner_item)
         var light = hoop.light.key
         binding.lightSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -84,7 +88,8 @@ class UpdatePopupActivity : AppCompatActivity() {
         }
 
         val freeStateList = listOf("NO_INFO", "FREE", "PAID")
-        binding.freeStateSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.freeStateItemList, android.R.layout.simple_spinner_item)
+        binding.freeStateSpinner.adapter = ArrayAdapter.createFromResource(this,
+            R.array.freeStateItemList, android.R.layout.simple_spinner_item)
         var freeState = hoop.freeState.key
         binding.freeStateSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -100,7 +105,8 @@ class UpdatePopupActivity : AppCompatActivity() {
         }
 
         val standardStateList = listOf("NO_INFO", "STANDARD", "UN_STANDARD")
-        binding.StandardStateSpinner.adapter = ArrayAdapter.createFromResource(this, R.array.standardStateItemList, android.R.layout.simple_spinner_item)
+        binding.StandardStateSpinner.adapter = ArrayAdapter.createFromResource(this,
+            R.array.standardStateItemList, android.R.layout.simple_spinner_item)
         var standardState = hoop.standardState.key
         binding.StandardStateSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
