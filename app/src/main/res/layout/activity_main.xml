@@ -35,7 +35,7 @@
                 android:id="@+id/navigationView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:itemBackground="@color/springGreen"
+                android:background="@color/springGreen"
                 app:itemIconTint="@drawable/menu_click_color"
                 app:itemTextColor="@drawable/menu_click_color"
                 app:layout_constraintBottom_toBottomOf="parent"
