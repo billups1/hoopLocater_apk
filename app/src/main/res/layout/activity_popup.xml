@@ -176,7 +176,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textSize="17sp"
-                    android:text="추가정보 : 이 농구장의 댓글 0개" />
+                    android:text="이 농구장의 댓글 0개" />
 
             </LinearLayout>
 

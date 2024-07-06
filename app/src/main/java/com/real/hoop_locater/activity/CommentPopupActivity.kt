@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -47,7 +48,7 @@ class CommentPopupActivity : AppCompatActivity() {
 
         val hoop = intent.getSerializableExtra("hoop") as Hoop
 
-        binding.commentTitle.text = "<"+hoop.name+"> 의 추가정보"
+        binding.commentTitle.text = "<"+hoop.name+"> 추가정보"
         binding.writerView.text = getSharedPreferences("sp1", MODE_PRIVATE).getString("anonymousLogin", null)
         binding.commentCountView.text = "댓글 수 " + hoop.commentCount + "개"
 
@@ -60,29 +61,43 @@ class CommentPopupActivity : AppCompatActivity() {
         setCommentList(service, hoop, recyclerView)
 
         binding.writeBtn.setOnClickListener {
-            service.createComment(
-                CommentCreateRequest(
-                    getSharedPreferences("sp1", MODE_PRIVATE).getString("anonymousLogin", null),
-                    hoop.id,
-                    binding.commentInput.text.toString()
-                )
-            ).enqueue(object : Callback<ResponseDto<Comment>> {
-                override fun onResponse(
-                    call: Call<ResponseDto<Comment>>,
-                    response: Response<ResponseDto<Comment>>
-                ) {
-                    setCommentList(service, hoop, recyclerView)
-                    binding.commentInput.setText(null)
-                }
-                override fun onFailure(call: Call<ResponseDto<Comment>>, t: Throwable) {
-                    Toast.makeText(
-                        this@CommentPopupActivity,
-                        "댓글 작성에 실패했습니다. 잠시 후 다시 시도해 주세요.",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
 
-            })
+            if (binding.commentInput.text.toString().length == 0) {
+                Toast.makeText(this, "댓글 내용을 입력해 주세요.", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            AlertDialog.Builder(this)
+                .setMessage("댓글을 입력하시겠습니까? 입력한 댓글은 변경할 수 없습니다.")
+                .setPositiveButton("확인") { dialog, which ->
+                    service.createComment(
+                        CommentCreateRequest(
+                            getSharedPreferences("sp1", MODE_PRIVATE).getString("anonymousLogin", null),
+                            hoop.id,
+                            binding.commentInput.text.toString()
+                        )
+                    ).enqueue(object : Callback<ResponseDto<Comment>> {
+                        override fun onResponse(
+                            call: Call<ResponseDto<Comment>>,
+                            response: Response<ResponseDto<Comment>>
+                        ) {
+                            setCommentList(service, hoop, recyclerView)
+                            binding.commentInput.setText(null)
+                        }
+                        override fun onFailure(call: Call<ResponseDto<Comment>>, t: Throwable) {
+                            Toast.makeText(
+                                this@CommentPopupActivity,
+                                "댓글 작성에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    })
+                }
+                    .setNegativeButton("취소") { dialog, which ->
+
+                }
+                .show()
+
         }
 
         binding.backBtn.setOnClickListener {
