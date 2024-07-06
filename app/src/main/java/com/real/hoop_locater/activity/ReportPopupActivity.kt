@@ -1,19 +1,20 @@
 package com.real.hoop_locater.activity
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.real.hoop_locater.BuildConfig.API_URL
 import com.real.hoop_locater.R
-import com.real.hoop_locater.RetrofitService
+import com.real.hoop_locater.web.RetrofitService
 import com.real.hoop_locater.databinding.ActivityReportPopupBinding
+import com.real.hoop_locater.dto.ResponseDto
 import com.real.hoop_locater.dto.hoop.Hoop
-import com.real.hoop_locater.dto.report.request.ReportCreateRequest
+import com.real.hoop_locater.web.report.ReportCreateRequest
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -58,27 +59,33 @@ class ReportPopupActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val retrofit = Retrofit.Builder().baseUrl(API_URL)
-                .addConverterFactory(GsonConverterFactory.create()).build()
-            val service = retrofit.create(RetrofitService::class.java)
+            AlertDialog.Builder(this)
+                .setMessage("신고하시겠습니까?")
+                .setPositiveButton("확인") { dialog, which ->
+                    val retrofit = Retrofit.Builder().baseUrl(API_URL)
+                        .addConverterFactory(GsonConverterFactory.create()).build()
+                    val service = retrofit.create(RetrofitService::class.java)
 
-            service.reportHoop(
-                ReportCreateRequest(
-                    hoop.id,
-                    reason,
-                    getSharedPreferences("sp1", Context.MODE_PRIVATE).getString("anonymousLogin", null)
-                )
-            ).enqueue(object : Callback<Int> {
-                override fun onResponse(call: Call<Int>, response: Response<Int>) {
-                    Toast.makeText(this@ReportPopupActivity, "신고가 접수되었습니다.", Toast.LENGTH_LONG).show()
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    this@ReportPopupActivity.finish()
-                }
+                    service.reportHoop(
+                        ReportCreateRequest(
+                            hoop.id,
+                            reason,
+                            getSharedPreferences("sp1", MODE_PRIVATE).getString("anonymousLogin", null)
+                        )
+                    ).enqueue(object : Callback<ResponseDto<Int>> {
+                        override fun onResponse(call: Call<ResponseDto<Int>>, response: Response<ResponseDto<Int>>) {
+                            Toast.makeText(this@ReportPopupActivity, "신고가 접수되었습니다.", Toast.LENGTH_LONG).show()
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            this@ReportPopupActivity.finish()
+                        }
 
-                override fun onFailure(call: Call<Int>, t: Throwable) {
-                    Toast.makeText(this@ReportPopupActivity, "신고에 실패했습니다. 다시 시도해 주세요.", Toast.LENGTH_LONG).show()
-                }
-            })
+                        override fun onFailure(call: Call<ResponseDto<Int>>, t: Throwable) {
+                            Toast.makeText(this@ReportPopupActivity, "신고에 실패했습니다. 다시 시도해 주세요.", Toast.LENGTH_LONG).show()
+                        }
+                    })
+                }.setNegativeButton("취소") { dialog, which ->
+
+                }.show()
 
         }
 

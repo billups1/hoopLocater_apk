@@ -6,12 +6,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.real.hoop_locater.R
-import com.real.hoop_locater.adapter.RVAdapter
+import com.real.hoop_locater.adapter.SettingMenuRVAdapter
 import com.real.hoop_locater.databinding.ActivitySettingBinding
 import com.real.hoop_locater.menu.SettingMenu
 
@@ -31,9 +30,9 @@ class SettingActivity : AppCompatActivity() {
         menuList.add(SettingMenu.PRIVACY_POLICY)
 
         val recyclerView = findViewById<RecyclerView>(R.id.rv)
-        val adapter = RVAdapter(baseContext, menuList)
+        val adapter = SettingMenuRVAdapter(baseContext, menuList)
 
-        adapter.itemClick = object : RVAdapter.ItemClick {
+        adapter.itemClick = object : SettingMenuRVAdapter.ItemClick {
             override fun onClick(view: View, position: Int) {
                 var intent: Intent? = null;
                 when (menuList[position]) {
@@ -65,7 +64,7 @@ class SettingActivity : AppCompatActivity() {
 
                 R.id.homeFragment -> {
                     startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+                    ActivityCompat.finishAffinity(this)
                     return@setOnItemSelectedListener true
                 }
 

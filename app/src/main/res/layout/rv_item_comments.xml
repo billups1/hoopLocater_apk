@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/square_background_border_black"
+    android:padding="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/commentWriter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="aaaaaaaa"
+        android:textColor="@color/black"
+        android:textSize="17sp"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/commentWriteDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="2024-7-5"
+        android:textColor="@color/black"
+        android:textSize="17sp"
+        android:layout_weight="1"
+        android:gravity="right" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/commentContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="댓글입니다.댓글입니다.댓글입니다.댓글입니다.댓글입니다.댓글입니다."
+        android:textColor="@color/black"
+        android:textSize="17sp"
+        android:layout_weight="1" />
+
+</LinearLayout>

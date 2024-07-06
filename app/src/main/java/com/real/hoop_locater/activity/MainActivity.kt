@@ -13,6 +13,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -25,8 +26,9 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.real.hoop_locater.BuildConfig.API_URL
 import com.real.hoop_locater.R
-import com.real.hoop_locater.RetrofitService
+import com.real.hoop_locater.web.RetrofitService
 import com.real.hoop_locater.databinding.ActivityMainBinding
+import com.real.hoop_locater.dto.ResponseDto
 import com.real.hoop_locater.dto.hoop.Hoop
 import com.real.hoop_locater.dto.hoop.HoopList
 import com.real.hoop_locater.util.RequestPermissionsUtil
@@ -73,7 +75,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 R.id.homeFragment -> {
                     startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+                    ActivityCompat.finishAffinity(this)
                     return@setOnItemSelectedListener true
                 }
 
@@ -122,14 +124,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 //                Log.d("southwestLatLng", southwestLatLng.toString())
 //            }
 //        })
-        service.getHoopList()?.enqueue(object : Callback<HoopList> {
-            override fun onResponse(call: Call<HoopList>, response: Response<HoopList>) {
-                response.body()?.forEach {
+        service.getHoopList()?.enqueue(object : Callback<ResponseDto<HoopList>> {
+            override fun onResponse(call: Call<ResponseDto<HoopList>>, response: Response<ResponseDto<HoopList>>
+            ) {
+                response.body()?.data?.forEach {
                     setupMarker(it)
                 }
             }
 
-            override fun onFailure(call: Call<HoopList>, t: Throwable) {
+            override fun onFailure(call: Call<ResponseDto<HoopList>>, t: Throwable) {
                 Toast.makeText(
                     this@MainActivity,
                     "농구장 불러오기에 실패했습니다. 잠시 후 다시 시도해 주세요.",
@@ -137,8 +140,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 ).show()
             }
         })
-
-        Log.d("asd", sharedPreferences.getLong("myLatitude", 0L).toString())
 
         if (intent.getSerializableExtra("hoop") != null) {
             val extraHoop = intent.getSerializableExtra("hoop") as Hoop

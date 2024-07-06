@@ -1,6 +1,5 @@
 package com.real.hoop_locater.activity
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -8,7 +7,9 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -20,10 +21,11 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.real.hoop_locater.BuildConfig.API_URL
 import com.real.hoop_locater.R
-import com.real.hoop_locater.RetrofitService
+import com.real.hoop_locater.web.RetrofitService
 import com.real.hoop_locater.databinding.ActivityHoopCreateBinding
+import com.real.hoop_locater.dto.ResponseDto
 import com.real.hoop_locater.dto.hoop.Hoop
-import com.real.hoop_locater.dto.hoop.request.HoopCreateRequest
+import com.real.hoop_locater.web.hoop.HoopCreateRequest
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -67,7 +69,7 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
                 R.id.homeFragment -> {
                     startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+                    ActivityCompat.finishAffinity(this)
                     return@setOnItemSelectedListener true
                 }
                 else -> {
@@ -156,33 +158,57 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
                 return@setOnClickListener
             }
 
-            val retrofit = Retrofit.Builder().baseUrl(API_URL)
-                .addConverterFactory(GsonConverterFactory.create()).build()
-            val service = retrofit.create(RetrofitService::class.java)
+            AlertDialog.Builder(this)
+                .setMessage("농구장 정보를 생성하시겠습니까?")
+                .setPositiveButton("확인") { dialog, which ->
+                    val retrofit = Retrofit.Builder().baseUrl(API_URL)
+                        .addConverterFactory(GsonConverterFactory.create()).build()
+                    val service = retrofit.create(RetrofitService::class.java)
 
-            service.createHoop(
-                HoopCreateRequest(binding.nameInput.text.toString(),
-                intent.getDoubleExtra("latitude", 0.0),
-                intent.getDoubleExtra("longitude", 0.0),
-                binding.hoopCountInput.text.toString().toInt(),
-                floorType,
-                light,
-                freeState,
-                standardState,
-                getSharedPreferences("sp1", Context.MODE_PRIVATE).getString("anonymousLogin", null))
-            ).enqueue(object : Callback<Hoop> {
-                override fun onResponse(call: Call<Hoop>, response: Response<Hoop>) {
-                    Toast.makeText(this@HoopCreateActivity, "농구장이 생성되었습니다.", Toast.LENGTH_LONG).show()
-                    finish()
-                    val intent = Intent(this@HoopCreateActivity, MainActivity::class.java)
-                    intent.putExtra("hoop", response.body())
-                    startActivity(intent)
-                }
+                    service.createHoop(
+                        HoopCreateRequest(
+                            binding.nameInput.text.toString(),
+                            intent.getDoubleExtra("latitude", 0.0),
+                            intent.getDoubleExtra("longitude", 0.0),
+                            binding.hoopCountInput.text.toString().toInt(),
+                            floorType,
+                            light,
+                            freeState,
+                            standardState,
+                            getSharedPreferences(
+                                "sp1",
+                                MODE_PRIVATE
+                            ).getString("anonymousLogin", null)
+                        )
+                    ).enqueue(object : Callback<ResponseDto<Hoop>> {
+                        override fun onResponse(
+                            call: Call<ResponseDto<Hoop>>,
+                            response: Response<ResponseDto<Hoop>>
+                        ) {
+                            Toast.makeText(
+                                this@HoopCreateActivity,
+                                "농구장이 생성되었습니다.",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            val intent = Intent(this@HoopCreateActivity, MainActivity::class.java)
+                            intent.putExtra("hoop", response.body()?.data)
+                            startActivity(intent)
+                            ActivityCompat.finishAffinity(this@HoopCreateActivity)
+                        }
 
-                override fun onFailure(call: Call<Hoop>, t: Throwable) {
-                    Toast.makeText(this@HoopCreateActivity, "농구장 생성에 실패했습니다. 다시 시도해 주세요.", Toast.LENGTH_LONG).show()
+                        override fun onFailure(call: Call<ResponseDto<Hoop>>, t: Throwable) {
+                            Toast.makeText(
+                                this@HoopCreateActivity,
+                                "농구장 생성에 실패했습니다. 다시 시도해 주세요.",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    })
                 }
-            })
+                .setNegativeButton("취소") { dialog, which ->
+
+                }
+                .show()
         }
 
 

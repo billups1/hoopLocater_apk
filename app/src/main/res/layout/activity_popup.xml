@@ -159,9 +159,26 @@
                         android:text="규격"
                         android:textSize="20sp" />
                 </LinearLayout>
-
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="10dp">
+                <TextView
+                    android:text="추가정보"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <Button
+                    android:id="@+id/commentBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="17sp"
+                    android:text="추가정보 : 이 농구장의 댓글 0개" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
