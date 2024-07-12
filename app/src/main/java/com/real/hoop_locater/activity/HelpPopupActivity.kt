@@ -1,6 +1,7 @@
 package com.real.hoop_locater.activity
 
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -24,6 +25,8 @@ class HelpPopupActivity : AppCompatActivity() {
 
         binding = ActivityHelpPopupBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.helpContentTextView.movementMethod = ScrollingMovementMethod.getInstance()
 
         val displayMetrics = applicationContext.resources.displayMetrics
         window.attributes.width = (displayMetrics.widthPixels * 0.91).toInt()

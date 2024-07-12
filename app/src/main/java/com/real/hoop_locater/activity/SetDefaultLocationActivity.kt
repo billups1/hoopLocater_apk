@@ -31,7 +31,7 @@ class SetDefaultLocationActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var googleMap: GoogleMap
     private lateinit var sharedPreferences: SharedPreferences
 
-    var latlng = LatLng(37.5664056, 126.9778222);
+    var latlng = LatLng(37.55100808889846, 126.99088096618652)  // 남산
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

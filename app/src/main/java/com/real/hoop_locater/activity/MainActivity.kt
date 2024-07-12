@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var googleMap: GoogleMap
     private lateinit var sharedPreferences: SharedPreferences
 
-    val DEFAULT_ZOOM = 13f;
+    val DEFAULT_ZOOM = 12f;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -159,7 +159,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         } else {
             googleMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
-                    LatLng(37.5664056, 126.9778222), // 서울시청
+                    LatLng(37.55100808889846, 126.99088096618652), // 남산
                     DEFAULT_ZOOM
                 )
             )
