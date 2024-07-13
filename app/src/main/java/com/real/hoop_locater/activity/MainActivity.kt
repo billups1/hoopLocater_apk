@@ -14,6 +14,10 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.initialization.InitializationStatus
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -32,6 +36,9 @@ import com.real.hoop_locater.dto.ResponseDto
 import com.real.hoop_locater.dto.hoop.Hoop
 import com.real.hoop_locater.dto.hoop.HoopList
 import com.real.hoop_locater.util.RequestPermissionsUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -84,6 +91,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         }
+
+        MobileAds.initialize(this, object : OnInitializationCompleteListener {
+            override fun onInitializationComplete(p0: InitializationStatus) {
+            }
+        })
+        binding.adView.loadAd(AdRequest.Builder().build())
+
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
