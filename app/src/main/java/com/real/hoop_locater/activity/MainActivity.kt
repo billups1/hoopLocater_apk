@@ -4,16 +4,22 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.Drawable
 import android.location.Location
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.res.ResourcesCompat
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.initialization.InitializationStatus
@@ -25,6 +31,8 @@ import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
@@ -213,7 +221,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             .addOnSuccessListener { success: Location? ->
                 success?.let { location ->
                     Toast.makeText(this, "내 위치로 이동", Toast.LENGTH_LONG).show()
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), 13F))
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), googleMap.cameraPosition.zoom))
+
+                    val markerOption = MarkerOptions().apply {
+                        position(LatLng(location.latitude, location.longitude))
+                        icon(getBitmapDescriptorFromVector(R.drawable.baseline_adjust_24, this@MainActivity))
+                        title("내 현재 위치")
+                    }
+
+                    val myLocationMarker = googleMap.addMarker(markerOption)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        myLocationMarker!!.remove()
+                    }, 5000)
                 }
             }
             .addOnFailureListener { fail ->
@@ -238,5 +257,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 java.lang.Double.doubleToRawLongBits(default)
             )
         )
+
+    private fun getBitmapDescriptorFromVector(id: Int, context: Context): BitmapDescriptor { // 벡터 이미지를 비트맵으로 바꾸기
+        var vectorDrawable: Drawable = context.getDrawable(id)!!
+        var h = (30 * getResources().getDisplayMetrics().density).toInt();
+        var w = (30 * getResources().getDisplayMetrics().density).toInt();
+        vectorDrawable.setBounds(0, 0, w, h)
+        var bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+        var canvas = Canvas(bm)
+        vectorDrawable.draw(canvas)
+        return BitmapDescriptorFactory.fromBitmap(bm)
+    }
 
 }
