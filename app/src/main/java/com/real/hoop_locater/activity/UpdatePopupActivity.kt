@@ -12,18 +12,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.real.hoop_locater.BuildConfig.API_URL
 import com.real.hoop_locater.R
-import com.real.hoop_locater.web.RetrofitService
+import com.real.hoop_locater.app.App
+import com.real.hoop_locater.app.App.Companion.prefs
+import com.real.hoop_locater.app.App.Companion.retrofitService
 import com.real.hoop_locater.databinding.ActivityUpdatePopupBinding
 import com.real.hoop_locater.dto.ResponseDto
+import com.real.hoop_locater.dto.auth.User
 import com.real.hoop_locater.dto.hoop.Hoop
 import com.real.hoop_locater.web.hoop.HoopUpdateRequest
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 
 class UpdatePopupActivity : AppCompatActivity() {
@@ -45,6 +45,39 @@ class UpdatePopupActivity : AppCompatActivity() {
 
         val displayMetrics = applicationContext.resources.displayMetrics
         window.attributes.width = (displayMetrics.widthPixels * 0.91).toInt()
+
+        // 내 id 입력하기
+        val accessToken = prefs.getAccessToken()
+        var alertDialog = AlertDialog.Builder(this)
+        if (accessToken != null && accessToken != "") {
+            retrofitService.myInfo().enqueue(object : Callback<ResponseDto<User>> {
+                override fun onResponse(
+                    call: Call<ResponseDto<User>>,
+                    response: Response<ResponseDto<User>>
+                ) {
+                    if (response.body()?.data?.loginId != null) {
+                        binding.writerView.text = response.body()?.data?.nickName.toString()
+                    } else {
+                        binding.writerView.text = App.prefs.getViewAnonymousId()
+                        prefs.deleteAccessToken()
+                        alertDialog.setMessage("로그아웃 되었습니다. 다시 로그인해 주세요.")
+                            .setPositiveButton("확인") { dialog, which ->
+                            }
+                            .show()
+                    }
+                }
+                override fun onFailure(call: Call<ResponseDto<User>>, t: Throwable) {
+                    binding.writerView.text = App.prefs.getViewAnonymousId()
+                    prefs.deleteAccessToken()
+                    alertDialog.setMessage("로그아웃 되었습니다. 다시 로그인해 주세요.")
+                        .setPositiveButton("확인") { dialog, which ->
+                        }
+                        .show()
+                }
+            })
+        } else {
+            binding.writerView.text = App.prefs.getViewAnonymousId()
+        }
 
         val hoop = intent.getSerializableExtra("hoop") as Hoop
 
@@ -130,11 +163,11 @@ class UpdatePopupActivity : AppCompatActivity() {
 
         binding.updateBtn.setOnClickListener {
 
-            if (binding.nameInput.text.toString().length == 0) {
+            if (binding.nameInput.text.toString().trim().length == 0) {
                 Toast.makeText(this, "농구장 이름을 입력해 주세요.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-            if (binding.hoopCountInput.text.toString().length == 0) {
+            if (binding.hoopCountInput.text.toString().trim().length == 0) {
                 Toast.makeText(this, "골대 개수를 입력해 주세요.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
@@ -142,11 +175,8 @@ class UpdatePopupActivity : AppCompatActivity() {
             AlertDialog.Builder(this)
                 .setMessage("농구장 정보를 수정하시겠습니까?")
                 .setPositiveButton("확인") { dialog, which ->
-                    val retrofit = Retrofit.Builder().baseUrl(API_URL)
-                        .addConverterFactory(GsonConverterFactory.create()).build()
-                    val service = retrofit.create(RetrofitService::class.java)
 
-                    service.updateHoop(
+                    retrofitService.updateHoop(
                         HoopUpdateRequest(
                             hoop.id,
                             binding.nameInput.text.toString(),
@@ -154,8 +184,7 @@ class UpdatePopupActivity : AppCompatActivity() {
                             floorType,
                             light,
                             freeState,
-                            standardState,
-                            getSharedPreferences("sp1", MODE_PRIVATE).getString("anonymousLogin", null)
+                            standardState
                         )
                     ).enqueue(object : Callback<ResponseDto<Hoop>> {
                         override fun onResponse(call: Call<ResponseDto<Hoop>>, response: Response<ResponseDto<Hoop>>) {

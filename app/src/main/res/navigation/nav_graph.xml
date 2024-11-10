@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/authLoginFragment">
+
+    <fragment
+        android:id="@+id/authLoginFragment"
+        android:name="com.real.hoop_locater.activity.AuthLoginFragment"
+        android:label="Auth Login Fragment"
+        tools:layout="@layout/fragment_auth_login" >
+        <action
+            android:id="@+id/action_authLoginFragment_to_authJoinFragment"
+            app:destination="@id/authJoinFragment" />
+        <action
+            android:id="@+id/action_authLoginFragment_to_authMyInfoFragment"
+            app:destination="@id/authMyInfoFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/authJoinFragment"
+        android:name="com.real.hoop_locater.activity.AuthJoinFragment"
+        android:label="Auth Join Fragment"
+        tools:layout="@layout/fragment_auth_join" >
+
+        <action
+            android:id="@+id/action_authJoinFragment_to_authLoginFragment"
+            app:destination="@id/authLoginFragment" />
+        <action
+            android:id="@+id/action_authJoinFragment_to_authMyInfoFragment"
+            app:destination="@id/authMyInfoFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/authMyInfoFragment"
+        android:name="com.real.hoop_locater.activity.AuthMyInfoFragment"
+        android:label="Auth MyInfo Fragment"
+        tools:layout="@layout/fragment_auth_my_info" >
+        <action
+            android:id="@+id/action_authMyInfoFragment_to_authLoginFragment"
+            app:destination="@id/authLoginFragment" />
+    </fragment>
+
+</navigation>

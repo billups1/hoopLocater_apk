@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:background="@color/springGreen"
+        app:labelVisibilityMode="labeled"
         app:itemIconTint="@drawable/menu_click_color"
         app:itemTextColor="@drawable/menu_click_color"
         app:layout_constraintBottom_toBottomOf="parent"

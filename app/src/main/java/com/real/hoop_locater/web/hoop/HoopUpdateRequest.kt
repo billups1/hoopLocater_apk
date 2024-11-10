@@ -7,6 +7,5 @@ data class HoopUpdateRequest(
     val floorType: String,
     val light: String,
     val freeState: String,
-    val standardState: String,
-    val loginId : String?
+    val standardState: String
 )

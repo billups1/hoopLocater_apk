@@ -57,6 +57,11 @@ class SettingActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener true
                 }
 
+                R.id.authFragment -> {
+                    startActivity(Intent(this, AuthActivity::class.java))
+                    return@setOnItemSelectedListener true
+                }
+
                 R.id.helpFragment -> {
                     startActivity(Intent(this, HelpPopupActivity::class.java))
                     return@setOnItemSelectedListener true

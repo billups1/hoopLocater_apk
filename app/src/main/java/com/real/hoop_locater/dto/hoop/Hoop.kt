@@ -12,5 +12,6 @@ data class Hoop(
     val light: Light,
     val freeState: FreeState,
     val standardState: StandardState,
-    val commentCount: Int
+    val commentCount: Int,
+    val lastChangeUser: String
 ) : Serializable

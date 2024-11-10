@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.AuthJoinFragment">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/springGreen">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="회원가입"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="15dp">
+                <TextView
+                    android:text="아이디"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/loginidInput_join"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="아이디" />
+
+                    <Button
+                        android:id="@+id/idDuplicationCheckBtn_join"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="중복확인" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/idDuplicationInfoFail_join"
+                    android:text="중복된 아이디입니다."
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#ff0000"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    />
+
+                <TextView
+                    android:id="@+id/idDuplicationInfoOk_join"
+                    android:text="사용가능한 아이디입니다."
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#0019f4"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="15dp">
+                <TextView
+                    android:text="닉네임"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/nickNameInput_join"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="닉네임" />
+
+                    <Button
+                        android:id="@+id/nickNameDuplicationCheckBtn_join"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="중복확인" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/nickNameDuplicationInfoFail_join"
+                    android:text="중복된 닉네임입니다."
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#ff0000"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    />
+                <TextView
+                    android:id="@+id/nickNameDuplicationInfoOk_join"
+                    android:text="사용가능한 닉네임입니다."
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#0019f4"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="15dp">
+                <TextView
+                    android:text="비밀번호"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <EditText
+                    android:id="@+id/passwordInput_join"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:hint="비밀번호" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="15dp">
+                <TextView
+                    android:text="비밀번호 재확인"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <EditText
+                    android:id="@+id/passwordInputRecheck_join"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:hint="비밀번호 재확인" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/joinBtn_join"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:text="회원가입하기" />
+
+                <Button
+                    android:id="@+id/backBtn_join"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:text="뒤로가기" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+</FrameLayout>

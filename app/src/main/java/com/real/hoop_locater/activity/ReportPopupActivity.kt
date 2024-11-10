@@ -10,9 +10,13 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.real.hoop_locater.BuildConfig.API_URL
 import com.real.hoop_locater.R
+import com.real.hoop_locater.app.App
+import com.real.hoop_locater.app.App.Companion.prefs
+import com.real.hoop_locater.app.App.Companion.retrofitService
 import com.real.hoop_locater.web.RetrofitService
 import com.real.hoop_locater.databinding.ActivityReportPopupBinding
 import com.real.hoop_locater.dto.ResponseDto
+import com.real.hoop_locater.dto.auth.User
 import com.real.hoop_locater.dto.hoop.Hoop
 import com.real.hoop_locater.web.report.ReportCreateRequest
 import retrofit2.Call
@@ -41,6 +45,39 @@ class ReportPopupActivity : AppCompatActivity() {
         val displayMetrics = applicationContext.resources.displayMetrics
         window.attributes.width = (displayMetrics.widthPixels * 0.91).toInt()
 
+        // 내 id 입력하기
+        val accessToken = prefs.getAccessToken()
+        var alertDialog = AlertDialog.Builder(this)
+        if (accessToken != null && accessToken != "") {
+            retrofitService.myInfo().enqueue(object : Callback<ResponseDto<User>> {
+                override fun onResponse(
+                    call: Call<ResponseDto<User>>,
+                    response: Response<ResponseDto<User>>
+                ) {
+                    if (response.body()?.data?.loginId != null) {
+                        binding.writerView.text = response.body()?.data?.nickName.toString()
+                    } else {
+                        binding.writerView.text = App.prefs.getViewAnonymousId()
+                        prefs.deleteAccessToken()
+                        alertDialog.setMessage("로그아웃 되었습니다. 다시 로그인해 주세요.")
+                            .setPositiveButton("확인") { dialog, which ->
+                            }
+                            .show()
+                    }
+                }
+                override fun onFailure(call: Call<ResponseDto<User>>, t: Throwable) {
+                    binding.writerView.text = App.prefs.getViewAnonymousId()
+                    prefs.deleteAccessToken()
+                    alertDialog.setMessage("로그아웃 되었습니다. 다시 로그인해 주세요.")
+                        .setPositiveButton("확인") { dialog, which ->
+                        }
+                        .show()
+                }
+            })
+        } else {
+            binding.writerView.text = App.prefs.getViewAnonymousId()
+        }
+
         val hoop = intent.getSerializableExtra("hoop") as Hoop
 
         var reason = ""
@@ -62,15 +99,11 @@ class ReportPopupActivity : AppCompatActivity() {
             AlertDialog.Builder(this)
                 .setMessage("신고하시겠습니까?")
                 .setPositiveButton("확인") { dialog, which ->
-                    val retrofit = Retrofit.Builder().baseUrl(API_URL)
-                        .addConverterFactory(GsonConverterFactory.create()).build()
-                    val service = retrofit.create(RetrofitService::class.java)
 
-                    service.reportHoop(
+                    retrofitService.reportHoop(
                         ReportCreateRequest(
                             hoop.id,
-                            reason,
-                            getSharedPreferences("sp1", MODE_PRIVATE).getString("anonymousLogin", null)
+                            reason
                         )
                     ).enqueue(object : Callback<ResponseDto<Int>> {
                         override fun onResponse(call: Call<ResponseDto<Int>>, response: Response<ResponseDto<Int>>) {

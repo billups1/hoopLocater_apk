@@ -19,18 +19,18 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.real.hoop_locater.BuildConfig.API_URL
 import com.real.hoop_locater.R
-import com.real.hoop_locater.web.RetrofitService
+import com.real.hoop_locater.app.App
+import com.real.hoop_locater.app.App.Companion.prefs
+import com.real.hoop_locater.app.App.Companion.retrofitService
 import com.real.hoop_locater.databinding.ActivityHoopCreateBinding
 import com.real.hoop_locater.dto.ResponseDto
+import com.real.hoop_locater.dto.auth.User
 import com.real.hoop_locater.dto.hoop.Hoop
 import com.real.hoop_locater.web.hoop.HoopCreateRequest
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -57,10 +57,47 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
 
+        // 내 id 입력하기
+        val accessToken = prefs.getAccessToken()
+        var alertDialog = AlertDialog.Builder(this)
+        if (accessToken != null && accessToken != "") {
+            retrofitService.myInfo().enqueue(object : Callback<ResponseDto<User>> {
+                override fun onResponse(
+                    call: Call<ResponseDto<User>>,
+                    response: Response<ResponseDto<User>>
+                ) {
+                    if (response.body()?.data?.loginId != null) {
+                        binding.writerView.text = response.body()?.data?.nickName.toString()
+                    } else {
+                        binding.writerView.text = App.prefs.getViewAnonymousId()
+                        prefs.deleteAccessToken()
+                        alertDialog.setMessage("로그아웃 되었습니다. 다시 로그인해 주세요.")
+                            .setPositiveButton("확인") { dialog, which ->
+                            }
+                            .show()
+                    }
+                }
+                override fun onFailure(call: Call<ResponseDto<User>>, t: Throwable) {
+                    binding.writerView.text = App.prefs.getViewAnonymousId()
+                    prefs.deleteAccessToken()
+                    alertDialog.setMessage("로그아웃 되었습니다. 다시 로그인해 주세요.")
+                        .setPositiveButton("확인") { dialog, which ->
+                        }
+                        .show()
+                }
+            })
+        } else {
+            binding.writerView.text = App.prefs.getViewAnonymousId()
+        }
+
         binding.navigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.settingFragment -> {
                     startActivity(Intent(this, SettingActivity::class.java))
+                    return@setOnItemSelectedListener true
+                }
+                R.id.authFragment -> {
+                    startActivity(Intent(this, AuthActivity::class.java))
                     return@setOnItemSelectedListener true
                 }
                 R.id.helpFragment -> {
@@ -149,11 +186,11 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding.createBtn.setOnClickListener {
 
-            if (binding.nameInput.text.toString().length == 0) {
+            if (binding.nameInput.text.toString().trim().length == 0) {
                 Toast.makeText(this, "농구장 이름을 입력해 주세요.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-            if (binding.hoopCountInput.text.toString().length == 0) {
+            if (binding.hoopCountInput.text.toString().trim().length == 0) {
                 Toast.makeText(this, "골대 개수를 입력해 주세요.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
@@ -161,11 +198,8 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
             AlertDialog.Builder(this)
                 .setMessage("농구장 정보를 생성하시겠습니까?")
                 .setPositiveButton("확인") { dialog, which ->
-                    val retrofit = Retrofit.Builder().baseUrl(API_URL)
-                        .addConverterFactory(GsonConverterFactory.create()).build()
-                    val service = retrofit.create(RetrofitService::class.java)
 
-                    service.createHoop(
+                    retrofitService.createHoop(
                         HoopCreateRequest(
                             binding.nameInput.text.toString(),
                             intent.getDoubleExtra("latitude", 0.0),
@@ -174,11 +208,7 @@ class HoopCreateActivity : AppCompatActivity(), OnMapReadyCallback {
                             floorType,
                             light,
                             freeState,
-                            standardState,
-                            getSharedPreferences(
-                                "sp1",
-                                MODE_PRIVATE
-                            ).getString("anonymousLogin", null)
+                            standardState
                         )
                     ).enqueue(object : Callback<ResponseDto<Hoop>> {
                         override fun onResponse(

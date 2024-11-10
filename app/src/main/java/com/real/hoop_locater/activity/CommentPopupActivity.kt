@@ -13,8 +13,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.real.hoop_locater.BuildConfig
 import com.real.hoop_locater.R
 import com.real.hoop_locater.adapter.CommentRVAdapter
+import com.real.hoop_locater.app.App
+import com.real.hoop_locater.app.App.Companion.prefs
+import com.real.hoop_locater.app.App.Companion.retrofitService
+import com.real.hoop_locater.app.AuthApp
 import com.real.hoop_locater.databinding.ActivityCommentPopupBinding
 import com.real.hoop_locater.dto.ResponseDto
+import com.real.hoop_locater.dto.auth.User
 import com.real.hoop_locater.dto.hoop.Comment
 import com.real.hoop_locater.dto.hoop.Hoop
 import com.real.hoop_locater.dto.page.Page
@@ -48,21 +53,51 @@ class CommentPopupActivity : AppCompatActivity() {
 
         val hoop = intent.getSerializableExtra("hoop") as Hoop
 
-        binding.commentTitle.text = "<"+hoop.name+"> 추가정보"
-        binding.writerView.text = getSharedPreferences("sp1", MODE_PRIVATE).getString("anonymousLogin", null)
+        binding.commentTitle.text = "<" + hoop.name + "> 추가정보"
+
+        // 내 id 입력하기
+        val accessToken = prefs.getAccessToken()
+        var alertDialog = AlertDialog.Builder(this)
+        if (accessToken != null && accessToken != "") {
+            retrofitService.myInfo().enqueue(object : Callback<ResponseDto<User>> {
+                override fun onResponse(
+                    call: Call<ResponseDto<User>>,
+                    response: Response<ResponseDto<User>>
+                ) {
+                    if (response.body()?.data?.loginId != null) {
+                        binding.writerView.text = response.body()?.data?.nickName.toString()
+                    } else {
+                        binding.writerView.text = App.prefs.getViewAnonymousId()
+                        prefs.deleteAccessToken()
+                        alertDialog.setMessage("로그아웃 되었습니다. 다시 로그인해 주세요.")
+                            .setPositiveButton("확인") { dialog, which ->
+                            }
+                            .show()
+                    }
+                }
+                override fun onFailure(call: Call<ResponseDto<User>>, t: Throwable) {
+                    binding.writerView.text = App.prefs.getViewAnonymousId()
+                    prefs.deleteAccessToken()
+                    alertDialog.setMessage("로그아웃 되었습니다. 다시 로그인해 주세요.")
+                        .setPositiveButton("확인") { dialog, which ->
+                        }
+                        .show()
+                }
+            })
+        } else {
+            binding.writerView.text = App.prefs.getViewAnonymousId()
+        }
+
         binding.commentCountView.text = "댓글 수 " + hoop.commentCount + "개"
 
-        val retrofit = Retrofit.Builder().baseUrl(BuildConfig.API_URL)
-            .addConverterFactory(GsonConverterFactory.create()).build()
-        val service = retrofit.create(RetrofitService::class.java)
-
+        // 해당 농구장의 댓글 리스트 불러오기
         val recyclerView = findViewById<RecyclerView>(R.id.commentRv)
+        setCommentList(hoop, recyclerView)
 
-        setCommentList(service, hoop, recyclerView)
-
+        // 댓글쓰기
         binding.writeBtn.setOnClickListener {
 
-            if (binding.commentInput.text.toString().length == 0) {
+            if (binding.commentInput.text.trim().toString().length == 0) {
                 Toast.makeText(this, "댓글 내용을 입력해 주세요.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
@@ -70,9 +105,8 @@ class CommentPopupActivity : AppCompatActivity() {
             AlertDialog.Builder(this)
                 .setMessage("댓글을 입력하시겠습니까? 입력한 댓글은 변경할 수 없습니다.")
                 .setPositiveButton("확인") { dialog, which ->
-                    service.createComment(
+                    retrofitService.createComment(
                         CommentCreateRequest(
-                            getSharedPreferences("sp1", MODE_PRIVATE).getString("anonymousLogin", null),
                             hoop.id,
                             binding.commentInput.text.toString()
                         )
@@ -81,9 +115,10 @@ class CommentPopupActivity : AppCompatActivity() {
                             call: Call<ResponseDto<Comment>>,
                             response: Response<ResponseDto<Comment>>
                         ) {
-                            setCommentList(service, hoop, recyclerView)
+                            setCommentList(hoop, recyclerView)
                             binding.commentInput.setText(null)
                         }
+
                         override fun onFailure(call: Call<ResponseDto<Comment>>, t: Throwable) {
                             Toast.makeText(
                                 this@CommentPopupActivity,
@@ -93,13 +128,14 @@ class CommentPopupActivity : AppCompatActivity() {
                         }
                     })
                 }
-                    .setNegativeButton("취소") { dialog, which ->
+                .setNegativeButton("취소") { dialog, which ->
 
                 }
                 .show()
 
         }
 
+        // 뒤로가기
         binding.backBtn.setOnClickListener {
             this.finish()
         }
@@ -107,11 +143,10 @@ class CommentPopupActivity : AppCompatActivity() {
     }
 
     private fun setCommentList(
-        service: RetrofitService,
         hoop: Hoop,
         recyclerView: RecyclerView
     ) {
-        service.getCommentList(hoop.id)
+        retrofitService.getCommentList(hoop.id)
             .enqueue(object : Callback<ResponseDto<Page<Comment>>> {
                 override fun onResponse(
                     call: Call<ResponseDto<Page<Comment>>>,
@@ -123,9 +158,11 @@ class CommentPopupActivity : AppCompatActivity() {
                     } else {
                         binding.noCommentLayout.visibility = View.GONE
                         binding.commentRvLayout.visibility = View.VISIBLE
-                        recyclerView.adapter = CommentRVAdapter(baseContext, response.body()!!.data!!.content)
+                        recyclerView.adapter =
+                            CommentRVAdapter(baseContext, response.body()!!.data!!.content)
                         recyclerView.layoutManager = LinearLayoutManager(this@CommentPopupActivity)
-                        binding.commentCountView.text = "댓글 수 " + response.body()!!.data!!.totalElements + "개"
+                        binding.commentCountView.text =
+                            "댓글 수 " + response.body()!!.data!!.totalElements + "개"
                     }
                 }
 

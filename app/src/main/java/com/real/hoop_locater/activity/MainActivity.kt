@@ -14,12 +14,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.res.ResourcesCompat
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.initialization.InitializationStatus
@@ -36,22 +34,19 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.real.hoop_locater.BuildConfig.API_URL
 import com.real.hoop_locater.R
-import com.real.hoop_locater.web.RetrofitService
+import com.real.hoop_locater.app.App.Companion.retrofitService
 import com.real.hoop_locater.databinding.ActivityMainBinding
 import com.real.hoop_locater.dto.ResponseDto
 import com.real.hoop_locater.dto.hoop.Hoop
 import com.real.hoop_locater.dto.hoop.HoopList
 import com.real.hoop_locater.util.RequestPermissionsUtil
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import okhttp3.JavaNetCookieJar
+import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import java.net.CookieManager
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -76,10 +71,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
 
+        // 메뉴바 아이콘 기능 추가
         binding.navigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.settingFragment -> {
                     startActivity(Intent(this, SettingActivity::class.java))
+                    return@setOnItemSelectedListener true
+                }
+
+                R.id.authFragment -> {
+                    startActivity(Intent(this, AuthActivity::class.java))
                     return@setOnItemSelectedListener true
                 }
 
@@ -132,9 +133,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
         // 마커 불러오기
-        val retrofit = Retrofit.Builder().baseUrl(API_URL)
-            .addConverterFactory(GsonConverterFactory.create()).build()
-        val service = retrofit.create(RetrofitService::class.java)
+        var builder = OkHttpClient().newBuilder()
+        var okHttpClient = builder
+            .cookieJar(JavaNetCookieJar(CookieManager()))
+            .build()
 
         // 맵 이동 끝났을때 경계선 좌표 알려주는 메서드 -> TODO 농구장 데이터가 더 많아지면 경계선 조금 밖에 까지만 마커 뿌리기
 //        googleMap.setOnCameraIdleListener(object : OnCameraIdleListener {
@@ -146,7 +148,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 //                Log.d("southwestLatLng", southwestLatLng.toString())
 //            }
 //        })
-        service.getHoopList()?.enqueue(object : Callback<ResponseDto<HoopList>> {
+        retrofitService.getHoopList()?.enqueue(object : Callback<ResponseDto<HoopList>> {
             override fun onResponse(call: Call<ResponseDto<HoopList>>, response: Response<ResponseDto<HoopList>>
             ) {
                 response.body()?.data?.forEach {
@@ -215,6 +217,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun moveToMyLocation(googleMap: GoogleMap) {
         RequestPermissionsUtil(this).requestLocation()
 
+//        val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+//        locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) // https://velog.io/@simsubeen/Android-Kotlin-%EC%82%AC%EC%9A%A9%EC%9E%90-%EC%9C%84%EC%B9%98-%EC%96%BB%EA%B8%B0
+
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
         fusedLocationProviderClient.lastLocation
@@ -240,7 +245,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
     }
 
-    fun isEnableLocationSystem(context: Context): Boolean {
+    fun isEnableLocationSystem(context: Context): Boolean { // 위치상태 켜져있는지 확인
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
             locationManager?.isLocationEnabled!!
